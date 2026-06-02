@@ -1,0 +1,33 @@
+# Dependencias y build
+node_modules/
+dist/
+*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Artefactos de debug / QA (no van al repo)
+_*.cjs
+_*.png
+serve.py
+index.legacy.html
+
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Assets pesados NO usados por la web (se mantienen locales, no se pushean)
+# Solo se usa public/assets/hero/intro-definitivo-web.mp4 (7.2MB) + poster + pool/salon.
+public/assets/hero/intro-definitivo-4k.mp4
+public/assets/hero/intro-definitivo-720.mp4
+public/assets/hero/intro-bochile.mp4
+public/assets/hero/intro-casa.mp4
+public/assets/hero/intro-casa-mobile.mp4
+public/assets/hero/intro-drone.mp4
+public/assets/video/
+public/assets/stock/
+public/assets/props/
