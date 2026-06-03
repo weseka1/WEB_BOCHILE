@@ -1,0 +1,80 @@
+import { useEffect, useRef, useState } from 'react'
+
+// Slider de presupuesto: dos manijas (min–max) arrastrables. Reemplaza el dropdown largo de rangos.
+// Alto fijo: nunca estira el contenedor. Funciona con mouse y touch (pointer events).
+export const PRICE_MAX = 1000000
+const STEP = 10000
+const fmt = (n) => 'US$ ' + n.toLocaleString('es-AR')
+const pct = (v) => (v / PRICE_MAX) * 100
+
+export default function PriceRange({ lo, hi, onChange, anyLabel, upto, over }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const trackRef = useRef(null)
+  const drag = useRef(null)
+  const loRef = useRef(lo); loRef.current = lo
+  const hiRef = useRef(hi); hiRef.current = hi
+
+  useEffect(() => {
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    const onEsc = (e) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('mousedown', onDoc)
+    document.addEventListener('keydown', onEsc)
+    return () => { document.removeEventListener('mousedown', onDoc); document.removeEventListener('keydown', onEsc) }
+  }, [])
+
+  const isAny = lo <= 0 && hi >= PRICE_MAX
+  const label = isAny ? anyLabel
+    : lo <= 0 ? `${upto} ${fmt(hi)}`
+    : hi >= PRICE_MAX ? `${over} ${fmt(lo)}`
+    : `${fmt(lo)} – ${fmt(hi)}`
+
+  const valFromX = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect()
+    const p = Math.max(0, Math.min(1, (clientX - r.left) / r.width))
+    return Math.round((p * PRICE_MAX) / STEP) * STEP
+  }
+  const onDown = (which) => (e) => {
+    e.preventDefault()
+    e.currentTarget.setPointerCapture(e.pointerId)
+    drag.current = which
+  }
+  const onMove = (e) => {
+    if (!drag.current) return
+    const v = valFromX(e.clientX)
+    if (drag.current === 'lo') onChange(Math.min(v, hiRef.current - STEP), hiRef.current)
+    else onChange(loRef.current, Math.max(v, loRef.current + STEP))
+  }
+  const onUp = () => { drag.current = null }
+  const onKey = (which) => (e) => {
+    const d = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -STEP : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? STEP : 0
+    if (!d) return
+    e.preventDefault()
+    if (which === 'lo') onChange(Math.max(0, Math.min(lo + d, hi - STEP)), hi)
+    else onChange(lo, Math.min(PRICE_MAX, Math.max(hi + d, lo + STEP)))
+  }
+
+  return (
+    <div className={'dd pr' + (open ? ' open' : '')} ref={ref}>
+      <button type="button" className={'dd-btn' + (isAny ? ' placeholder' : '')} data-cursor onClick={() => setOpen((o) => !o)}>
+        <span>{label}</span><span className="car" />
+      </button>
+      {open && (
+        <div className="pr-panel">
+          <div className="pr-vals">
+            <span>{fmt(Math.max(0, lo))}</span>
+            <span>{hi >= PRICE_MAX ? fmt(PRICE_MAX) + '+' : fmt(hi)}</span>
+          </div>
+          <div className="pr-track" ref={trackRef}>
+            <div className="pr-fill" style={{ left: pct(lo) + '%', right: (100 - pct(hi)) + '%' }} />
+            <button type="button" className="pr-thumb" style={{ left: pct(lo) + '%' }} aria-label="Precio mínimo"
+              onPointerDown={onDown('lo')} onPointerMove={onMove} onPointerUp={onUp} onKeyDown={onKey('lo')} />
+            <button type="button" className="pr-thumb" style={{ left: pct(hi) + '%' }} aria-label="Precio máximo"
+              onPointerDown={onDown('hi')} onPointerMove={onMove} onPointerUp={onUp} onKeyDown={onKey('hi')} />
+          </div>
+          <button type="button" className="pr-reset" data-cursor onClick={() => onChange(0, PRICE_MAX)}>{anyLabel}</button>
+        </div>
+      )}
+    </div>
+  )
+}

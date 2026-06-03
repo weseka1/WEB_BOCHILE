@@ -72,7 +72,7 @@ export default function Contacto() {
             </div>
           </div>
           <div className="foot-bar2">
-            <span>© 2026 Inmobiliaria Bochile</span>
+            <span>© 2026 Bochile Real Estate</span>
             <span>{t.footer.made}</span>
           </div>
         </div>

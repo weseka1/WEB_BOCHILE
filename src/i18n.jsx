@@ -4,9 +4,9 @@ export const DICT = {
   es: {
     nav: { comprar: 'Comprar', alquilar: 'Alquilar', tasaciones: 'Tasaciones', contacto: 'Contacto', wa: 'WhatsApp' },
     hero: {
-      eyebrow: 'Inmobiliaria en Bahía Blanca · desde 1970',
+      eyebrow: 'Real Estate en Bahía Blanca · desde 1970',
       headline: 'El lugar correcto, desde 1970.',
-      sub: 'Compra, venta y alquiler en Bahía Blanca y la región, con el asesoramiento de la inmobiliaria de siempre.',
+      sub: 'Compra, venta y alquiler en Bahía Blanca y la región, con el asesoramiento de siempre.',
       ctaProps: 'Ver propiedades',
       ctaTasa: 'Tasación sin cargo',
     },
@@ -28,14 +28,14 @@ export const DICT = {
     marca: { quote: 'Medio siglo encontrando el lugar correcto en Bahía Blanca.', sub: 'Desde 1970 acompañamos a cada familia con la misma confianza de siempre. La experiencia avala nuestra trayectoria.', tag: 'Desde 1970 · Bahía Blanca' },
     tasa: { badge: 'Tasación 100% sin cargo', title1: '¿Cuánto vale', title2: 'su propiedad?', sub: 'La tasamos gratis y coordinamos todo por WhatsApp. Medio siglo captando propiedades en Bahía Blanca nos respalda.', perks: ['Respuesta en menos de 24 horas', 'Sin compromiso ni costo', 'El mejor precio del mercado'], formhead: 'Empiece acá ↓', submit: 'Quiero mi tasación gratis', note: 'Lo atiende un asesor de Bochile, sin compromiso.', f: { nombre: 'Su nombre', tel: 'WhatsApp', tipo: 'Tipo de propiedad', zona: 'Zona o dirección aproximada', opts: ['Casa', 'Departamento', 'Terreno', 'Local / Oficina', 'Otro'] } },
     contact: { title1: 'Su próxima propiedad', title2: 'empieza con un mensaje.', cta: 'Escríbanos por WhatsApp', address: 'Caronti 360, 8000 Bahía Blanca', phones: ['(291) 453-7816', '(291) 451-7040', '(291) 452-9622'], email: 'info@bochile.com', hours: 'Lunes a Viernes · 9 a 16 h' },
-    footer: { rights: '© 2026 Inmobiliaria Bochile · Desde 1970 en Bahía Blanca.', made: 'Sitio por WESEKA.IA' },
+    footer: { rights: '© 2026 Bochile Real Estate · Desde 1970 en Bahía Blanca.', made: 'Sitio por WESEKA.IA' },
   },
   en: {
     nav: { comprar: 'Buy', alquilar: 'Rent', tasaciones: 'Valuation', contacto: 'Contact', wa: 'WhatsApp' },
     hero: {
       eyebrow: 'Real estate in Bahía Blanca · since 1970',
       headline: 'The right place, since 1970.',
-      sub: 'Buying, selling and renting across Bahía Blanca and the region, with the guidance of the agency you’ve always trusted.',
+      sub: 'Buying, selling and renting across Bahía Blanca and the region, with the guidance you’ve always trusted.',
       ctaProps: 'View properties',
       ctaTasa: 'Free valuation',
     },
@@ -57,7 +57,7 @@ export const DICT = {
     marca: { quote: 'Half a century finding the right place in Bahía Blanca.', sub: 'Since 1970 we’ve guided every family with the same trust as always. Experience backs our track record.', tag: 'Since 1970 · Bahía Blanca' },
     tasa: { badge: '100% free valuation', title1: 'What is your', title2: 'property worth?', sub: 'We value it for free and arrange everything on WhatsApp. Half a century listing properties in Bahía Blanca backs us.', perks: ['Reply in under 24 hours', 'No cost, no commitment', 'The best price on the market'], formhead: 'Start here ↓', submit: 'Get my free valuation', note: 'A Bochile advisor will assist you, no obligation.', f: { nombre: 'Your name', tel: 'WhatsApp', tipo: 'Property type', zona: 'Area or approximate address', opts: ['House', 'Apartment', 'Land', 'Retail / Office', 'Other'] } },
     contact: { title1: 'Your next property', title2: 'starts with a message.', cta: 'Message us on WhatsApp', address: 'Caronti 360, 8000 Bahía Blanca', phones: ['(291) 453-7816', '(291) 451-7040', '(291) 452-9622'], email: 'info@bochile.com', hours: 'Monday to Friday · 9 to 16 h' },
-    footer: { rights: '© 2026 Inmobiliaria Bochile · Since 1970 in Bahía Blanca.', made: 'Site by WESEKA.IA' },
+    footer: { rights: '© 2026 Bochile Real Estate · Since 1970 in Bahía Blanca.', made: 'Site by WESEKA.IA' },
   },
 }
 

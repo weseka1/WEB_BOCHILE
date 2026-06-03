@@ -303,6 +303,20 @@ button{font-family:inherit;cursor:none;border:none;background:none;color:inherit
 .dd-opt:hover{background:var(--panel-2);color:var(--ink)}
 .dd-opt.on{color:var(--gold)}
 .dd-opt.on::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--gold)}
+/* slider de presupuesto (min–max) — alto fijo, no estira */
+.pr-panel{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:60;min-width:248px;background:var(--panel);
+  border:1px solid var(--line-2);border-radius:12px;padding:18px 18px 14px;box-shadow:0 24px 60px rgba(0,0,0,.55);
+  transform-origin:top;animation:ddin .26s var(--ease)}
+.pr-vals{display:flex;justify-content:space-between;font-family:'Inter';font-weight:500;font-size:.82rem;color:var(--ink)}
+.pr-track{position:relative;height:4px;border-radius:4px;background:var(--line-2);margin:18px 11px 6px}
+.pr-fill{position:absolute;top:0;bottom:0;background:var(--gold);border-radius:4px}
+.pr-thumb{position:absolute;top:50%;width:18px;height:18px;padding:0;border-radius:50%;background:var(--ink);
+  border:2px solid var(--gold);transform:translate(-50%,-50%);cursor:none;touch-action:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);transition:transform .12s,box-shadow .12s}
+.pr-thumb:hover,.pr-thumb:active{transform:translate(-50%,-50%) scale(1.22);box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.pr-reset{margin-top:14px;width:100%;padding:9px;border:1px solid var(--line-2);border-radius:8px;background:transparent;
+  font-family:'Inter';font-size:.8rem;color:var(--soft);cursor:none;transition:.15s}
+.pr-reset:hover{background:var(--panel-2);color:var(--ink)}
 
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding:44px var(--pad) 80px;max-width:var(--maxw);margin:0 auto}
 @media(max-width:1024px){.pgrid{grid-template-columns:repeat(2,1fr)}.filters .count{margin-left:0;width:100%}}
