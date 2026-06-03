@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { findProp, fmtPrice, wa } from '../data/properties'
+import { findProp, fmtPrice, waTo } from '../data/properties'
 import { useLang } from '../i18n'
 import PropertyMap from '../components/PropertyMap'
 
@@ -65,7 +65,7 @@ export default function PropertyDetail() {
             {p.baths != null && <div><b>{p.baths}</b><span>{t.detail.baths}</span></div>}
             <div><b>{p.type}</b><span>{t.detail.type}</span></div>
           </div>
-          <a className="di-wa" data-cursor target="_blank" rel="noopener" href={wa(msg)}><WaIcon /> {t.detail.consultar}</a>
+          <a className="di-wa" data-cursor target="_blank" rel="noopener" href={waTo(p.op === 'rent' ? 'alquileres' : 'ventas', msg)}><WaIcon /> {t.detail.consultar}</a>
           <div className="di-note">{t.detail.note}</div>
         </aside>
       </div>

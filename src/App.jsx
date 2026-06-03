@@ -7,6 +7,7 @@ import { LangProvider } from './i18n'
 import Cursor from './components/Cursor'
 import Nav from './components/Nav'
 import CamilaBot from './components/CamilaBot'
+import WhatsAppMenu from './components/WhatsAppMenu'
 import Home from './pages/Home'
 import Propiedades from './pages/Propiedades'
 import PropertyDetail from './pages/PropertyDetail'
@@ -73,6 +74,7 @@ export default function App() {
           <Route path="/propiedad/:slug" element={<PropertyDetail />} />
         </Routes>
         <CamilaBot />
+        <WhatsAppMenu />
       </BrowserRouter>
     </LangProvider>
   )

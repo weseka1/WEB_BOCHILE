@@ -537,3 +537,50 @@ button{font-family:inherit;cursor:none;border:none;background:none;color:inherit
   *{animation-duration:.001ms!important;transition-duration:.001ms!important}
   .reveal{opacity:1;transform:none}
 }
+
+/* ===== WhatsApp flotante multi-área ===== */
+.wam{position:fixed;left:clamp(16px,3vw,28px);bottom:clamp(16px,3vw,28px);z-index:91}
+.wam-backdrop{position:fixed;inset:0;z-index:90;background:rgba(8,9,10,.55);backdrop-filter:blur(2px);
+  opacity:0;pointer-events:none;transition:opacity .35s var(--ease)}
+.wam-backdrop.open{opacity:1;pointer-events:auto}
+.wam-fab{position:relative;width:58px;height:58px;border-radius:50%;background:var(--green);cursor:none;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 14px 34px rgba(0,0,0,.45),0 0 0 6px rgba(39,174,96,.14);
+  transition:transform .35s var(--ease),background .3s}
+.wam-fab:hover{transform:translateY(-2px) scale(1.03);background:var(--green-deep)}
+.wam-fab-wa{display:flex;transition:.3s var(--ease)}
+.wam-fab-wa svg{width:30px;height:30px;fill:#fff}
+.wam-fab-x{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:32px;line-height:1;opacity:0;transform:rotate(-90deg) scale(.4);transition:.3s var(--ease)}
+.wam-fab.is-open .wam-fab-wa{opacity:0;transform:scale(.4)}
+.wam-fab.is-open .wam-fab-x{opacity:1;transform:rotate(0) scale(1)}
+.wam-list{position:absolute;left:0;bottom:72px;width:min(82vw,300px);
+  background:rgba(14,16,18,.97);backdrop-filter:blur(20px);border:1px solid var(--line-2);border-radius:18px;padding:14px;
+  box-shadow:0 30px 70px rgba(0,0,0,.55);opacity:0;transform:translateY(14px) scale(.96);transform-origin:bottom left;
+  pointer-events:none;transition:opacity .35s var(--ease),transform .4s var(--ease)}
+.wam.open .wam-list{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.wam-title{font-family:'Archivo';font-weight:700;font-size:1.02rem;color:var(--ink);padding:6px 8px 12px;line-height:1.2}
+.wam-title small{display:block;font-family:'Inter';font-weight:400;font-size:.78rem;color:var(--soft);margin-top:5px}
+.wam-opt{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;text-decoration:none;color:var(--ink);
+  transition:background .25s var(--ease),transform .25s}
+.wam-opt:hover{background:rgba(39,174,96,.12);transform:translateX(3px)}
+.wam-ic{width:34px;height:34px;flex:none;border-radius:9px;background:var(--green);display:flex;align-items:center;justify-content:center}
+.wam-ic svg{width:18px;height:18px;fill:#fff}
+.wam-lb{flex:1;font-family:'Inter';font-weight:600;font-size:.95rem}
+.wam-go{color:var(--mute);font-style:normal;transition:.3s var(--ease)}
+.wam-opt:hover .wam-go{color:var(--green);transform:translateX(2px)}
+
+/* ===== WhatsApp por área en Contacto ===== */
+.contact-wa{margin-top:42px;max-width:560px}
+.contact-wa-head{font-family:'Inter';font-weight:500;font-size:var(--fs-label);letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin-bottom:16px}
+.contact-wa-head span{color:var(--green)}
+.contact-wa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.contact-wa-btn{display:flex;align-items:center;gap:13px;padding:15px 18px;border-radius:14px;text-decoration:none;color:var(--ink);
+  background:rgba(244,245,246,.04);border:1px solid var(--line-2);transition:border-color .3s var(--ease),background .3s,transform .3s}
+.contact-wa-btn:hover{border-color:var(--green);background:rgba(39,174,96,.1);transform:translateY(-2px)}
+.contact-wa-btn>svg{width:24px;height:24px;flex:none;fill:var(--green)}
+.contact-wa-btn span{display:flex;flex-direction:column;flex:1;font-family:'Inter';font-weight:600;font-size:1rem;line-height:1.1}
+.contact-wa-btn small{font-weight:400;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:3px}
+.contact-wa-btn i{color:var(--mute);font-style:normal;transition:.3s var(--ease)}
+.contact-wa-btn:hover i{color:var(--green);transform:translateX(2px)}
+@media(max-width:600px){.contact-wa-grid{grid-template-columns:1fr}}

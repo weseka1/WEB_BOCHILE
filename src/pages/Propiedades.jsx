@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { PROPERTIES, wa } from '../data/properties'
+import { PROPERTIES, wa, waTo } from '../data/properties'
 import { useLang } from '../i18n'
 import PropertyCard from '../components/PropertyCard'
 import Dropdown from '../components/Dropdown'
@@ -81,7 +81,7 @@ export default function Propiedades() {
             <h3 className="cat-empty-h">{t.cat.rentEmpty}</h3>
             <p>{t.cat.rentEmptySub}</p>
             <div><a className="pill green" data-cursor target="_blank" rel="noopener"
-              href={wa('Hola, estoy buscando una propiedad en alquiler en Bahía Blanca. ¿Me pueden ayudar?')}>{t.nav.wa}</a></div>
+              href={waTo('alquileres', 'Hola, estoy buscando una propiedad en alquiler en Bahía Blanca. ¿Me pueden ayudar?')}>{t.nav.wa}</a></div>
           </div>
         ) : (
           <div className="cat-empty">

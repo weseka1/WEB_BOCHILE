@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { wa } from '../data/properties'
+import { waTo } from '../data/properties'
 import { useLang } from '../i18n'
 import Dropdown from './Dropdown'
 
@@ -10,7 +10,7 @@ export default function Tasacion() {
   const submit = (e) => {
     e.preventDefault()
     const msg = `Hola Camila, quiero solicitar una tasación.\n\nNombre: ${f.nombre}\nTeléfono: ${f.tel}\nTipo: ${f.tipo || '(a definir)'}\nZona: ${f.zona || '(a definir)'}\n\n¿Cuándo podrían tasarla?`
-    window.open(wa(msg), '_blank')
+    window.open(waTo('tasaciones', msg), '_blank')
   }
   return (
     <section className="section wrap" id="tasacion">
