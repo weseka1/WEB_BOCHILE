@@ -16,7 +16,6 @@ function Spotlight({ p }) {
       <Link className="spot-link" to={`/propiedad/${p.slug}`} aria-label={p.title} />
       <div className="spot-media">
         <img src={p.img} alt={p.title} loading="lazy" referrerPolicy="no-referrer" />
-        <span className="spot-exc">◆ {t.props.exclusive}</span>
         {p.images.length > 1 && <span className="spot-photos">⊞ {p.images.length} {t.props.photos}</span>}
       </div>
       <div className="spot-body">
@@ -51,7 +50,7 @@ export default function FeaturedProps() {
       {hero && <Spotlight p={hero} />}
 
       <div className="feat-grid">
-        {rest.map((p) => <PropertyCard key={p.id} p={p} featured />)}
+        {rest.map((p) => <PropertyCard key={p.id} p={p} />)}
       </div>
 
       <Link className="viewall reveal" to="/propiedades" data-cursor>

@@ -20,6 +20,23 @@ export const waAreaMsg = (area, lang = 'es') => ({
   general:    lang === 'en' ? 'Hi, I have a question.'                           : 'Hola, tengo una consulta.',
 }[area] || '')
 
+// Datos que el scraper a veces no estructuró → se parsean del texto del aviso (sin inventar).
+const _txt = (p) => `${p.title || ''} . ${p.description || ''} . ${(p.features || []).join(' . ')}`
+// Baños: "3 baños", "baños: 2", "2 baños completos"
+const parseBaths = (p) => {
+  const m = _txt(p).match(/(\d+)\s*ba[ñn]os?\b|ba[ñn]os?\s*:?\s*(\d+)/i)
+  const n = m ? parseInt(m[1] || m[2], 10) : NaN
+  return Number.isFinite(n) && n > 0 && n <= 12 ? n : null
+}
+// Superficie total: "superficie total: 254 m²", "254 m² totales"
+const parseAreaTotal = (p) => {
+  const s = _txt(p)
+  const m = s.match(/superficie\s+total\s*(?:de|:)?\s*([\d.]+)\s*m/i) || s.match(/([\d.]+)\s*m2?\s*totales/i)
+  if (!m) return null
+  const n = parseInt(m[1].replace(/\./g, ''), 10)
+  return Number.isFinite(n) && n >= 10 && n <= 100000 ? n : null
+}
+
 // Detecta "en pozo" (preventa / en construcción) desde el texto del aviso.
 // Se deriva en runtime para sobrevivir a un re-scrapeo (no hay campo en el JSON).
 // Ojo: NO incluir "a construir / para construir" → eso son lotes baldíos, no preventa.
@@ -33,14 +50,20 @@ export const PROPERTIES = raw.map((p) => ({
   type: p.typeLabel,        // display + filtro
   badge: p.typeLabel,       // tag = tipo (filtros por ciudad, no por barrio)
   pozo: isPozo(p),          // condición "en pozo" (preventa/construcción) derivada del texto
+  baths: p.baths != null ? p.baths : parseBaths(p),  // si el scraper no los trajo, se parsean
+  areaTotal: parseAreaTotal(p),                       // superficie total real si el aviso la declara
   img: p.main || p.images[0],
 }))
 
+// Venta en USD (estándar inmobiliario AR); alquiler en ARS.
+export const fmtUSD = (n) => 'US$ ' + n.toLocaleString('es-AR')
+export const fmtARS = (n) => '$ ' + n.toLocaleString('es-AR') + ' ARS'
+
 export const fmtPrice = (p) => {
-  // acepta número o el objeto propiedad
-  if (typeof p === 'number') return 'US$ ' + p.toLocaleString('es-AR')
+  // acepta número (asume venta/USD) o el objeto propiedad (decide por p.op)
+  if (typeof p === 'number') return fmtUSD(p)
   if (p && typeof p === 'object') {
-    if (typeof p.price === 'number') return 'US$ ' + p.price.toLocaleString('es-AR')
+    if (typeof p.price === 'number') return p.op === 'rent' ? fmtARS(p.price) : fmtUSD(p.price)
     return p.priceText || 'Consultar'
   }
   return 'Consultar'

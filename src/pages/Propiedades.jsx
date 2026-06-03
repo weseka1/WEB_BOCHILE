@@ -4,9 +4,11 @@ import { PROPERTIES, wa, waTo } from '../data/properties'
 import { useLang } from '../i18n'
 import PropertyCard from '../components/PropertyCard'
 import Dropdown from '../components/Dropdown'
-import PriceRange, { PRICE_MAX } from '../components/PriceRange'
+import PriceRange from '../components/PriceRange'
 
 const PAGE = 9
+const SALE_MAX = 1000000     // venta: tope del slider en USD
+const RENT_MAX = 63900000    // alquiler: tope del slider en ARS ($63.900.000)
 const ZONES = [...new Set(PROPERTIES.map((p) => p.zone))]
 const TYPES = [...new Set(PROPERTIES.map((p) => p.type))]
 const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -15,27 +17,30 @@ export default function Propiedades() {
   const { t } = useLang()
   const [sp, setSp] = useSearchParams()
   const op = sp.get('op') || 'sale'
+  const priceMax = op === 'rent' ? RENT_MAX : SALE_MAX
+  const priceStep = op === 'rent' ? 100000 : 10000
+  const currency = op === 'rent' ? 'ars' : 'usd'
   const [type, setType] = useState('')
   const [zone, setZone] = useState('')
   const [lo, setLo] = useState(0)
-  const [hi, setHi] = useState(PRICE_MAX)
+  const [hi, setHi] = useState(priceMax)
   const [pozo, setPozo] = useState(false)
   const [q, setQ] = useState('')
   const [shown, setShown] = useState(PAGE)
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
-  const setOp = (v) => { sp.set('op', v); setSp(sp, { replace: true }); setShown(PAGE) }
+  const setOp = (v) => { sp.set('op', v); setSp(sp, { replace: true }); setShown(PAGE); setLo(0); setHi(v === 'rent' ? RENT_MAX : SALE_MAX) }
 
   const filtered = useMemo(() => {
-    const hasPrice = lo > 0 || hi < PRICE_MAX
+    const hasPrice = lo > 0 || hi < priceMax
     return PROPERTIES.filter((p) => p.op === op)
       .filter((p) => (type ? p.type === type : true))
       .filter((p) => (zone ? p.zone === zone : true))
       .filter((p) => (pozo ? p.pozo : true))
       // Precio por rango del slider: respeta piso Y techo. Las "Consulte precio" (sin price) quedan fuera al filtrar por precio.
-      .filter((p) => (!hasPrice ? true : (p.price != null && p.price >= lo && (hi >= PRICE_MAX || p.price <= hi))))
+      .filter((p) => (!hasPrice ? true : (p.price != null && p.price >= lo && (hi >= priceMax || p.price <= hi))))
       .filter((p) => (q ? norm(`${p.title} ${p.location} ${p.zone} ${p.type}`).includes(norm(q)) : true))
-  }, [op, type, zone, pozo, lo, hi, q])
+  }, [op, type, zone, pozo, lo, hi, q, priceMax])
 
   const typeOpts = [{ value: '', label: t.cat.alltypes }, ...TYPES.map((x) => ({ value: x, label: x }))]
   const zoneOpts = [{ value: '', label: t.cat.allzones }, ...ZONES.map((x) => ({ value: x, label: x }))]
@@ -59,7 +64,7 @@ export default function Propiedades() {
           onClick={() => { setPozo((v) => !v); setShown(PAGE) }}>
           <span className="ftoggle-dot" aria-hidden="true" />{t.cat.pozo}
         </button>
-        <PriceRange lo={lo} hi={hi} onChange={(a, b) => { setLo(a); setHi(b); setShown(PAGE) }} anyLabel={t.cat.anyprice} upto={t.cat.upto} over={t.cat.over} />
+        <PriceRange lo={lo} hi={hi} onChange={(a, b) => { setLo(a); setHi(b); setShown(PAGE) }} anyLabel={t.cat.anyprice} upto={t.cat.upto} over={t.cat.over} max={priceMax} step={priceStep} currency={currency} />
         <input className="fsearch" value={q} onChange={(e) => { setQ(e.target.value); setShown(PAGE) }} placeholder={t.cat.search} data-cursor />
         {filtered.length > 0 && <span className="count">{filtered.length} {t.cat.results}</span>}
       </div>

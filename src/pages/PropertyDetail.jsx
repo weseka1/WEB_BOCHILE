@@ -60,7 +60,7 @@ export default function PropertyDetail() {
           <h1 className="di-title">{p.title}</h1>
           <div className="di-loc">◦ {p.location}{p.address ? <><br />{p.address}</> : ''}</div>
           <div className="di-specs">
-            {p.area != null && <div><b>{p.area} m²</b><span>{t.detail.area}</span></div>}
+            {(p.areaTotal ?? p.area) != null && <div><b>{(p.areaTotal ?? p.area)} m²</b><span>{t.detail.area}</span></div>}
             {p.beds != null && <div><b>{p.beds}</b><span>{isAmb ? t.detail.amb : t.detail.beds}</span></div>}
             {p.baths != null && <div><b>{p.baths}</b><span>{t.detail.baths}</span></div>}
             <div><b>{p.type}</b><span>{t.detail.type}</span></div>

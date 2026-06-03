@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 
 // Slider de presupuesto: dos manijas (min–max) arrastrables. Reemplaza el dropdown largo de rangos.
 // Alto fijo: nunca estira el contenedor. Funciona con mouse y touch (pointer events).
-export const PRICE_MAX = 1000000
+export const PRICE_MAX = 1000000   // tope por defecto (venta, USD)
 const STEP = 10000
-const fmt = (n) => 'US$ ' + n.toLocaleString('es-AR')
-const pct = (v) => (v / PRICE_MAX) * 100
 
-export default function PriceRange({ lo, hi, onChange, anyLabel, upto, over }) {
+export default function PriceRange({ lo, hi, onChange, anyLabel, upto, over, max = PRICE_MAX, step = STEP, currency = 'usd' }) {
+  const fmt = (n) => currency === 'ars' ? '$ ' + n.toLocaleString('es-AR') + ' ARS' : 'US$ ' + n.toLocaleString('es-AR')
+  const pct = (v) => (v / max) * 100
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
   const trackRef = useRef(null)
@@ -23,16 +23,16 @@ export default function PriceRange({ lo, hi, onChange, anyLabel, upto, over }) {
     return () => { document.removeEventListener('mousedown', onDoc); document.removeEventListener('keydown', onEsc) }
   }, [])
 
-  const isAny = lo <= 0 && hi >= PRICE_MAX
+  const isAny = lo <= 0 && hi >= max
   const label = isAny ? anyLabel
     : lo <= 0 ? `${upto} ${fmt(hi)}`
-    : hi >= PRICE_MAX ? `${over} ${fmt(lo)}`
+    : hi >= max ? `${over} ${fmt(lo)}`
     : `${fmt(lo)} – ${fmt(hi)}`
 
   const valFromX = (clientX) => {
     const r = trackRef.current.getBoundingClientRect()
     const p = Math.max(0, Math.min(1, (clientX - r.left) / r.width))
-    return Math.round((p * PRICE_MAX) / STEP) * STEP
+    return Math.round((p * max) / step) * step
   }
   const onDown = (which) => (e) => {
     e.preventDefault()
@@ -42,16 +42,16 @@ export default function PriceRange({ lo, hi, onChange, anyLabel, upto, over }) {
   const onMove = (e) => {
     if (!drag.current) return
     const v = valFromX(e.clientX)
-    if (drag.current === 'lo') onChange(Math.min(v, hiRef.current - STEP), hiRef.current)
-    else onChange(loRef.current, Math.max(v, loRef.current + STEP))
+    if (drag.current === 'lo') onChange(Math.min(v, hiRef.current - step), hiRef.current)
+    else onChange(loRef.current, Math.max(v, loRef.current + step))
   }
   const onUp = () => { drag.current = null }
   const onKey = (which) => (e) => {
-    const d = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -STEP : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? STEP : 0
+    const d = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -step : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? step : 0
     if (!d) return
     e.preventDefault()
-    if (which === 'lo') onChange(Math.max(0, Math.min(lo + d, hi - STEP)), hi)
-    else onChange(lo, Math.min(PRICE_MAX, Math.max(hi + d, lo + STEP)))
+    if (which === 'lo') onChange(Math.max(0, Math.min(lo + d, hi - step)), hi)
+    else onChange(lo, Math.min(max, Math.max(hi + d, lo + step)))
   }
 
   return (
@@ -63,7 +63,7 @@ export default function PriceRange({ lo, hi, onChange, anyLabel, upto, over }) {
         <div className="pr-panel">
           <div className="pr-vals">
             <span>{fmt(Math.max(0, lo))}</span>
-            <span>{hi >= PRICE_MAX ? fmt(PRICE_MAX) + '+' : fmt(hi)}</span>
+            <span>{hi >= max ? fmt(max) + '+' : fmt(hi)}</span>
           </div>
           <div className="pr-track" ref={trackRef}>
             <div className="pr-fill" style={{ left: pct(lo) + '%', right: (100 - pct(hi)) + '%' }} />
@@ -72,7 +72,7 @@ export default function PriceRange({ lo, hi, onChange, anyLabel, upto, over }) {
             <button type="button" className="pr-thumb" style={{ left: pct(hi) + '%' }} aria-label="Precio máximo"
               onPointerDown={onDown('hi')} onPointerMove={onMove} onPointerUp={onUp} onKeyDown={onKey('hi')} />
           </div>
-          <button type="button" className="pr-reset" data-cursor onClick={() => onChange(0, PRICE_MAX)}>{anyLabel}</button>
+          <button type="button" className="pr-reset" data-cursor onClick={() => onChange(0, max)}>{anyLabel}</button>
         </div>
       )}
     </div>
