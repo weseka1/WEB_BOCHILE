@@ -4,7 +4,7 @@ import gsap from 'gsap'
 import { fmtPrice } from '../data/properties'
 import { useLang } from '../i18n'
 
-export default function PropertyCard({ p }) {
+export default function PropertyCard({ p, featured = false }) {
   const { t } = useLang()
   const ref = useRef(null)
   const beds = p.type === 'Departamento' || p.type === 'PH' ? 'amb.' : 'dorm.'
@@ -31,6 +31,8 @@ export default function PropertyCard({ p }) {
         <img src={p.img} alt={p.title} loading="lazy" referrerPolicy="no-referrer" />
         <div className="pcard-tags">
           <span className="pcard-op">{p.op === 'sale' ? t.cat.sale : t.cat.rent}</span>
+          {featured && <span className="pcard-exc">◆ {t.props.exclusive}</span>}
+          {p.pozo && <span className="pcard-pozo">{t.cat.pozo}</span>}
           <span className="pcard-badge">{p.badge}</span>
         </div>
         {p.images.length > 1 && <span className="pcard-photos">⊞ {p.images.length}</span>}

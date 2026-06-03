@@ -203,6 +203,43 @@ button{font-family:inherit;cursor:none;border:none;background:none;color:inherit
 .svc-line{position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
 .svc-cell:hover .svc-line{transform:scaleX(1)}
 
+/* ===== DESTACADAS: kicker de sección + spotlight estrella ===== */
+.sec-kicker{font-family:'Inter';font-weight:500;font-size:var(--fs-label);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.spot{position:relative;display:grid;grid-template-columns:1.12fr .88fr;margin-bottom:30px;
+  border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(22,25,28,.78),rgba(11,13,15,.93));
+  transition:border-color .4s,box-shadow .45s var(--ease)}
+.spot:hover{border-color:rgba(207,212,216,.34);box-shadow:0 44px 110px -42px rgba(0,0,0,.95),0 0 64px -22px rgba(130,185,225,.3)}
+.spot-link{position:absolute;inset:0;z-index:8}
+.spot-media{position:relative;min-height:430px;overflow:hidden}
+.spot-media img{width:100%;height:100%;object-fit:cover;transition:transform 1.5s var(--ease)}
+.spot:hover .spot-media img{transform:scale(1.05)}
+.spot-media::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 50%,rgba(11,13,15,.55))}
+.spot-exc{position:absolute;top:18px;left:18px;z-index:3;display:inline-flex;align-items:center;gap:7px;
+  font-family:'JetBrains Mono';font-weight:600;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bg);
+  background:linear-gradient(180deg,#fff,#cfd4d8);padding:8px 14px;border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.45)}
+.spot-photos{position:absolute;bottom:18px;left:18px;z-index:3;font-family:'JetBrains Mono';font-weight:500;font-size:.62rem;color:#fff;
+  background:rgba(8,9,10,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);padding:6px 11px;border-radius:7px}
+.spot-body{position:relative;z-index:2;padding:clamp(28px,3.4vw,54px);display:flex;flex-direction:column;justify-content:center}
+.spot-kicker{font-family:'Inter';font-weight:500;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.spot-name{font-family:'Archivo';font-weight:700;font-size:clamp(1.5rem,2.4vw,2.25rem);line-height:1.08;color:var(--ink);letter-spacing:-.01em}
+.spot-loc{font-family:'Inter';font-weight:300;font-size:.92rem;color:var(--soft);margin-top:12px}
+.spot-price{font-family:'JetBrains Mono';font-weight:600;font-size:clamp(1.6rem,2.5vw,2.3rem);color:var(--ink);margin-top:22px;letter-spacing:.01em}
+.spot-specs{display:flex;gap:clamp(20px,3vw,34px);margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+.spot-specs div{font-family:'Inter';font-size:.68rem;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.spot-specs b{display:block;font-family:'JetBrains Mono';color:var(--ink);font-size:1.05rem;font-weight:600;margin-bottom:4px;text-transform:none;letter-spacing:.01em}
+.spot-cta{display:inline-flex;align-items:center;gap:10px;margin-top:30px;align-self:flex-start;
+  font-family:'JetBrains Mono';font-weight:500;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);
+  background:var(--ink);padding:13px 22px;border-radius:10px;transition:gap .3s var(--ease),opacity .3s}
+.spot:hover .spot-cta{gap:16px}
+.spot-cta svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .3s var(--ease)}
+.spot:hover .spot-cta svg{transform:translateX(4px)}
+@media(max-width:860px){
+  .spot{grid-template-columns:1fr}
+  .spot-media{min-height:260px}
+  .spot-media::after{background:linear-gradient(0deg,rgba(11,13,15,.6),transparent 45%)}
+}
+
 /* ===== PROPERTY CARD ===== */
 .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
 @media(max-width:1024px){.feat-grid{grid-template-columns:repeat(2,1fr)}}
@@ -244,7 +281,7 @@ button{font-family:inherit;cursor:none;border:none;background:none;color:inherit
 .pcard-tags{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;z-index:3;gap:8px}
 .pcard-op{font-family:'JetBrains Mono';font-weight:500;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
   background:rgba(8,9,10,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.13);color:#fff;padding:6px 11px;border-radius:7px}
-.pcard-badge{font-family:'JetBrains Mono';font-weight:500;font-size:.6rem;letter-spacing:.04em;
+.pcard-badge{font-family:'JetBrains Mono';font-weight:500;font-size:.6rem;letter-spacing:.04em;margin-left:auto;
   background:rgba(207,212,216,.93);color:var(--bg);padding:6px 11px;border-radius:7px}
 .pcard-photos{position:absolute;bottom:14px;right:14px;z-index:3;font-family:'JetBrains Mono';font-weight:500;font-size:.58rem;
   background:rgba(8,9,10,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);color:#fff;padding:5px 10px;border-radius:7px}
@@ -284,6 +321,18 @@ button{font-family:inherit;cursor:none;border:none;background:none;color:inherit
 .filters select,.filters .fsearch{background:var(--panel);border:1px solid var(--line-2);border-radius:10px;padding:11px 15px;color:var(--ink);font-family:'Inter';font-size:.86rem;cursor:none;outline:none}
 .filters .fsearch{flex:1;min-width:220px}
 .filters .count{margin-left:auto;font-family:'Inter';font-weight:500;font-size:.74rem;color:var(--mute);white-space:nowrap}
+/* toggle "En pozo" (condición preventa/construcción) */
+.ftoggle{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border:1px solid var(--line-2);border-radius:10px;background:var(--panel);color:var(--soft);font-family:'Inter';font-size:.86rem;font-weight:500;white-space:nowrap;cursor:none;transition:.2s}
+.ftoggle:hover{color:var(--ink);border-color:var(--green)}
+.ftoggle-dot{width:8px;height:8px;border-radius:50%;background:var(--mute);transition:.2s}
+.ftoggle.on{background:var(--green);border-color:var(--green);color:#fff}
+.ftoggle.on .ftoggle-dot{background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+/* badge "EN POZO" en la tarjeta */
+.pcard-pozo{font-family:'JetBrains Mono';font-weight:600;font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--green);color:#fff;padding:6px 11px;border-radius:7px;box-shadow:0 4px 14px rgba(39,174,96,.4)}
+/* badge "EXCLUSIVA" en la tarjeta destacada */
+.pcard-exc{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono';font-weight:600;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--bg);background:linear-gradient(180deg,#fff,#cfd4d8);padding:6px 11px;border-radius:7px;box-shadow:0 4px 14px rgba(207,212,216,.28)}
 /* dropdown custom (moderno) */
 .dd{position:relative;min-width:170px}
 .dd-btn{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;background:var(--panel);

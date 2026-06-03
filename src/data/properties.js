@@ -20,12 +20,19 @@ export const waAreaMsg = (area, lang = 'es') => ({
   general:    lang === 'en' ? 'Hi, I have a question.'                           : 'Hola, tengo una consulta.',
 }[area] || '')
 
+// Detecta "en pozo" (preventa / en construcción) desde el texto del aviso.
+// Se deriva en runtime para sobrevivir a un re-scrapeo (no hay campo en el JSON).
+// Ojo: NO incluir "a construir / para construir" → eso son lotes baldíos, no preventa.
+const POZO_RX = /(en pozo|de pozo|desde pozo|preventa|pre-venta|en construcci|en obra|fideicomiso|en ejecuci|pr[oó]xima entrega|en desarrollo)/i
+export const isPozo = (p) => POZO_RX.test(`${p.title || ''} ${p.description || ''} ${p.priceText || ''}`)
+
 // Normalizo al shape que usan los componentes + conservo los campos de detalle.
 // El JSON ya trae: city, barrio, location ("city · barrio" display), zone (barrio||city para filtrar).
 export const PROPERTIES = raw.map((p) => ({
   ...p,
   type: p.typeLabel,        // display + filtro
   badge: p.typeLabel,       // tag = tipo (filtros por ciudad, no por barrio)
+  pozo: isPozo(p),          // condición "en pozo" (preventa/construcción) derivada del texto
   img: p.main || p.images[0],
 }))
 
@@ -46,6 +53,27 @@ export const EXCLUSIVES = PROPERTIES
   .filter((p) => p.op === 'sale' && p.price && p.images.length >= 3)
   .sort((a, b) => b.price - a.price)
   .slice(0, 3)
+
+// Propiedades DESTACADAS — curaduría manual de Bochile (orden fijo, por ID estable).
+// El [0] es el "spotlight" estrella. Si un ID desaparece tras un re-scrapeo, se
+// completa con las más caras (con fotos) para que la sección nunca quede corta.
+const FEATURED_IDS = [
+  '26292', // Alem 127 — Exclusivo semipiso · US$750k (ESTRELLA)
+  '25333', // Ramón y Cajal 3600 — Casa, Barrio Patagonia · US$650k
+  '25711', // Torre Manantiales — Exclusivo piso · US$680k
+  '25087', // Sauce Grande — Casa frente al mar · US$450k
+  '22488', // Florida 1000 — Casa · US$380k
+  '26201', // Yrigoyen 650 — Yrigoyen Boulevard · US$310k
+  '22392', // Hueque 236 — Casa, Barrio Patagonia · US$265k
+]
+export const FEATURED = (() => {
+  const list = FEATURED_IDS.map((id) => PROPERTIES.find((p) => p.id === id)).filter(Boolean)
+  const fill = PROPERTIES
+    .filter((p) => p.op === 'sale' && p.price && p.images.length >= 3)
+    .sort((a, b) => b.price - a.price)
+  for (const p of fill) { if (list.length >= 7) break; if (!list.includes(p)) list.push(p) }
+  return list.slice(0, 7)
+})()
 
 // Título corto para el hero: "Dirección · Tipo"
 export const heroTitle = (p) => `${p.address || p.location} · ${p.typeLabel}`
