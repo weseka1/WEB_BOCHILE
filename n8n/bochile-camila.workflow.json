@@ -1,0 +1,145 @@
+{
+  "name": "[BOCHILE] Camila chat web → OpenAI",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bochile-camila",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "node-webhook",
+      "name": "Webhook Camila",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "bochile-camila"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Entrada: body del webhook { message, history[], lang }\nconst input = $input.first().json;\nconst body = input.body || input;\nconst message = String(body.message || '').slice(0, 1000);\nconst history = Array.isArray(body.history) ? body.history.slice(-8) : [];\nconst lang = body.lang === 'en' ? 'en' : 'es';\n\n// Catálogo REAL (compacto) servido por la web — para recomendar sin inventar\nconst catalog = await this.helpers.httpRequest({\n  url: 'https://web-bochile.onrender.com/data/catalog.min.json',\n  json: true,\n});\n\nconst sys = [\n  lang === 'en'\n    ? 'You are Camila, a real-estate advisor at Bochile (Bahia Blanca, Argentina, since 1970). Warm, professional, concise. Reply in English.'\n    : 'Sos Camila, asesora de Bochile (inmobiliaria de Bahia Blanca, desde 1970). Calida, profesional y concisa. Trata al usuario de USTED (formal). Responde en espanol.',\n  'Solo podes recomendar propiedades del CATALOGO que te paso (son reales). NUNCA inventes propiedades, precios ni direcciones.',\n  'Si el usuario busca algo, elegi hasta 3 ids del catalogo que mejor matcheen y devolvelos en \"props\". Si no aplica (saludo, pregunta general), props=[].',\n  'No hay alquileres cargados (todos op=\"sale\"). Si piden alquiler, avisa con honestidad y ofrece tomar sus datos por WhatsApp.',\n  'Cuando tenga sentido, sugeri continuar por WhatsApp para coordinar con un asesor.',\n  'RESPONDE EXCLUSIVAMENTE en JSON valido: {\"text\": string, \"props\": string[]}. Nada fuera del JSON.',\n  'CATALOGO (JSON): ' + JSON.stringify(catalog),\n].join('\\n');\n\nconst messages = [{ role: 'system', content: sys }];\nfor (const h of history) {\n  if (h && (h.role === 'user' || h.role === 'assistant') && h.content) {\n    messages.push({ role: h.role, content: String(h.content).slice(0, 1000) });\n  }\n}\nmessages.push({ role: 'user', content: message });\n\nreturn [{ json: { body: { model: 'gpt-4o-mini', temperature: 0.4, response_format: { type: 'json_object' }, messages } } }];"
+      },
+      "id": "node-armar",
+      "name": "Armar request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.body }}",
+        "options": {}
+      },
+      "id": "node-openai",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parsea la respuesta de OpenAI -> { text, props }\nconst res = $input.first().json;\nlet out = { text: '', props: [] };\ntry {\n  const content = res.choices[0].message.content;\n  const parsed = typeof content === 'string' ? JSON.parse(content) : content;\n  out.text = String(parsed.text || '').trim();\n  out.props = Array.isArray(parsed.props) ? parsed.props.map(String).slice(0, 3) : [];\n} catch (e) {\n  out.text = '';\n}\nif (!out.text) out.text = 'Disculpe, tuve un inconveniente. Puede escribirnos por WhatsApp y lo atendemos enseguida.';\nreturn [{ json: out }];"
+      },
+      "id": "node-parse",
+      "name": "Parsear respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "node-respond",
+      "name": "Responder",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Camila": {
+      "main": [
+        [
+          {
+            "node": "Armar request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar request": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Parsear respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear respuesta": {
+      "main": [
+        [
+          {
+            "node": "Responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

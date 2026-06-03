@@ -6,7 +6,8 @@
   "description": "Bochile Inmobiliaria — experiencia web premium (WESEKA.IA)",
   "scripts": {
     "dev": "vite --host --port 4300",
-    "build": "vite build",
+    "catalog": "node scripts/gen-catalog.cjs",
+    "build": "node scripts/gen-catalog.cjs && vite build",
     "preview": "vite preview --port 4300"
   },
   "dependencies": {

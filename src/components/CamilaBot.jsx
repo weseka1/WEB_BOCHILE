@@ -6,6 +6,31 @@ import { useLang } from '../i18n'
 
 const byId = (id) => PROPERTIES.find((p) => p.id === id)
 
+// Cerebro remoto: webhook de n8n (weseka.onrender.com) con OpenAI. Configurable por env.
+const CAMILA_WEBHOOK = import.meta.env.VITE_CAMILA_WEBHOOK || 'https://weseka.onrender.com/webhook/bochile-camila'
+
+// Llama al webhook; si falla / tarda / está dormido → null (y caemos al motor local).
+async function askCamila(message, history, lang) {
+  const ctrl = new AbortController()
+  const to = setTimeout(() => ctrl.abort(), 45000) // cold start del free tier puede tardar
+  try {
+    const res = await fetch(CAMILA_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, history, lang }),
+      signal: ctrl.signal,
+    })
+    if (!res.ok) throw new Error('http ' + res.status)
+    const data = await res.json()
+    if (!data || typeof data.text !== 'string') throw new Error('bad shape')
+    return { text: data.text, props: Array.isArray(data.props) ? data.props.map(String) : [] }
+  } catch {
+    return null
+  } finally {
+    clearTimeout(to)
+  }
+}
+
 export default function CamilaBot() {
   const { lang, t } = useLang()
   const [open, setOpen] = useState(false)
@@ -33,18 +58,20 @@ export default function CamilaBot() {
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: 'smooth' })
   }, [msgs, typing])
 
-  const send = (text) => {
+  const send = async (text) => {
     const v = (text ?? input).trim()
     if (!v) return
     setInput('')
+    // historial para el LLM (últimos turnos), antes de sumar el mensaje nuevo
+    const history = msgs.filter((m) => m.who === 'me' || m.who === 'them')
+      .slice(-8).map((m) => ({ role: m.who === 'me' ? 'user' : 'assistant', content: m.text }))
     setMsgs((m) => [...m, { who: 'me', text: v }])
     setTyping(true)
-    setTimeout(() => {
-      const r = camilaReply(v, lang)
-      setTyping(false)
-      setMsgs((m) => [...m, { who: 'them', text: r.text, props: r.props, quick: r.chips, wa: r.wa, goto: r.goto }])
-      if (r.goto) document.querySelector(r.goto)?.scrollIntoView({ behavior: 'smooth' })
-    }, 750)
+    const remote = await askCamila(v, history, lang)   // n8n + OpenAI
+    const r = remote || camilaReply(v, lang)           // fallback motor local
+    setTyping(false)
+    setMsgs((m) => [...m, { who: 'them', text: r.text, props: r.props, quick: r.chips, wa: r.wa, goto: r.goto }])
+    if (r.goto) document.querySelector(r.goto)?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
