@@ -55,6 +55,17 @@ export const PROPERTIES = raw.map((p) => ({
   img: p.main || p.images[0],
 }))
 
+// Orden "vidriera" del catálogo: lo más atractivo primero (casas/deptos con muchas
+// fotos y precio); lotes, campos, galpones y cocheras al fondo. Una portada linda vende.
+const _typeScore = (t) => ({
+  'Casa': 100, 'Departamento': 100, 'Dúplex': 100, 'PH': 85,
+  'Local': 45, 'Oficina': 45, 'Otros': 30,
+  'Lote / Terreno': 20, 'Campo': 20, 'Galpón': 15, 'Cochera': 5,
+}[t] ?? 25)
+const _desir = (p) => _typeScore(p.type) + Math.min(p.images?.length || 0, 25) + (p.price ? 10 : 0)
+export const CATALOG = [...PROPERTIES].sort((a, b) =>
+  _desir(b) - _desir(a) || (b.price || 0) - (a.price || 0) || (b.images?.length || 0) - (a.images?.length || 0))
+
 // Venta en USD (estándar inmobiliario AR); alquiler en ARS.
 export const fmtUSD = (n) => 'US$ ' + n.toLocaleString('es-AR')
 export const fmtARS = (n) => '$ ' + n.toLocaleString('es-AR') + ' ARS'

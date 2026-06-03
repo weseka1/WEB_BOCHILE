@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { PROPERTIES, wa, waTo } from '../data/properties'
+import { PROPERTIES, CATALOG, wa, waTo } from '../data/properties'
 import { useLang } from '../i18n'
 import PropertyCard from '../components/PropertyCard'
 import Dropdown from '../components/Dropdown'
@@ -33,7 +33,7 @@ export default function Propiedades() {
 
   const filtered = useMemo(() => {
     const hasPrice = lo > 0 || hi < priceMax
-    return PROPERTIES.filter((p) => p.op === op)
+    return CATALOG.filter((p) => p.op === op)
       .filter((p) => (type ? p.type === type : true))
       .filter((p) => (zone ? p.zone === zone : true))
       .filter((p) => (pozo ? p.pozo : true))
