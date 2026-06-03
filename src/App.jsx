@@ -32,6 +32,20 @@ function RouteFx({ lenisRef }) {
     const t = setTimeout(() => ScrollTrigger.refresh(), 360)
     return () => { b.forEach((s) => s.kill()); clearTimeout(t) }
   }, [loc.pathname])
+
+  // Scroll por hash AUNQUE ya estés en la misma página (Tasaciones/Contacto desde la home).
+  // Reintenta hasta que la sección y Lenis existan (cubre el caso de venir de otra ruta).
+  useEffect(() => {
+    if (!loc.hash) return
+    let tries = 0
+    const tick = () => {
+      const el = document.querySelector(loc.hash)
+      if (el && lenisRef.current) lenisRef.current.scrollTo(el, { offset: -70 })
+      else if (tries++ < 25) id = setTimeout(tick, 80)
+    }
+    let id = setTimeout(tick, 80)
+    return () => clearTimeout(id)
+  }, [loc.hash, loc.key])
   return null
 }
 
