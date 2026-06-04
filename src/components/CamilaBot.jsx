@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { camilaReply } from '../lib/camila'
-import { PROPERTIES, fmtPrice, wa } from '../data/properties'
+import { fmtPrice, wa } from '../data/properties'
+import { useProperties } from '../lib/PropertiesProvider'
 import { useLang } from '../i18n'
-
-const byId = (id) => PROPERTIES.find((p) => p.id === id)
 
 // Cerebro remoto: webhook de n8n (weseka.onrender.com) con OpenAI. Configurable por env.
 const CAMILA_WEBHOOK = import.meta.env.VITE_CAMILA_WEBHOOK || 'https://weseka.onrender.com/webhook/bochile-camila'
@@ -33,13 +32,15 @@ async function askCamila(message, history, lang) {
 
 export default function CamilaBot() {
   const { lang, t } = useLang()
+  const { properties } = useProperties()
   const [open, setOpen] = useState(false)
   const [msgs, setMsgs] = useState([])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
   const bodyRef = useRef(null)
 
-  const greet = () => camilaReply('hola', lang)
+  const byId = (id) => properties.find((p) => p.id === String(id))
+  const greet = () => camilaReply('hola', lang, properties)
 
   useEffect(() => {
     const openIt = () => setOpen(true)
@@ -68,7 +69,7 @@ export default function CamilaBot() {
     setMsgs((m) => [...m, { who: 'me', text: v }])
     setTyping(true)
     const remote = await askCamila(v, history, lang)   // n8n + OpenAI
-    const r = remote || camilaReply(v, lang)           // fallback motor local
+    const r = remote || camilaReply(v, lang, properties) // fallback motor local
     setTyping(false)
     setMsgs((m) => [...m, { who: 'them', text: r.text, props: r.props, quick: r.chips, wa: r.wa, goto: r.goto }])
     if (r.goto) document.querySelector(r.goto)?.scrollIntoView({ behavior: 'smooth' })

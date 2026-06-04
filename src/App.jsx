@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { lazy, Suspense, useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Lenis from 'lenis'
 import gsap from 'gsap'
@@ -11,6 +11,11 @@ import WhatsAppMenu from './components/WhatsAppMenu'
 import Home from './pages/Home'
 import Propiedades from './pages/Propiedades'
 import PropertyDetail from './pages/PropertyDetail'
+
+// Panel admin: lazy → no infla el bundle de la web pública.
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
+const AdminProperties = lazy(() => import('./pages/admin/AdminProperties'))
+const PropertyForm = lazy(() => import('./pages/admin/PropertyForm'))
 
 gsap.registerPlugin(ScrollTrigger)
 const QA = typeof location !== 'undefined' && location.search.includes('qa')
@@ -34,7 +39,6 @@ function RouteFx({ lenisRef }) {
   }, [loc.pathname])
 
   // Scroll por hash AUNQUE ya estés en la misma página (Tasaciones/Contacto desde la home).
-  // Reintenta hasta que la sección y Lenis existan (cubre el caso de venir de otra ruta).
   useEffect(() => {
     if (!loc.hash) return
     let tries = 0
@@ -49,20 +53,25 @@ function RouteFx({ lenisRef }) {
   return null
 }
 
-export default function App() {
+function AppInner() {
   const lenisRef = useRef(null)
+  const loc = useLocation()
+  const isAdmin = loc.pathname.startsWith('/admin')
 
+  // Smooth scroll (Lenis) + atajos de ancla: SOLO en la web pública, nunca en el panel.
   useEffect(() => {
+    if (isAdmin) return
     const lenis = new Lenis({ lerp: 0.09, smoothWheel: true })
     lenisRef.current = lenis
     lenis.on('scroll', ScrollTrigger.update)
     const raf = (time) => lenis.raf(time * 1000)
     gsap.ticker.add(raf)
     gsap.ticker.lagSmoothing(0)
-    return () => { gsap.ticker.remove(raf); lenis.destroy() }
-  }, [])
+    return () => { gsap.ticker.remove(raf); lenis.destroy(); lenisRef.current = null }
+  }, [isAdmin])
 
   useEffect(() => {
+    if (isAdmin) return
     const click = (e) => {
       const a = e.target.closest('a[href^="#"]')
       if (!a) return
@@ -74,21 +83,36 @@ export default function App() {
     }
     document.addEventListener('click', click)
     return () => document.removeEventListener('click', click)
-  }, [])
+  }, [isAdmin])
 
   return (
-    <LangProvider>
-      <BrowserRouter>
-        <Cursor />
-        <Nav />
-        <RouteFx lenisRef={lenisRef} />
+    <>
+      {!isAdmin && <Cursor />}
+      {!isAdmin && <Nav />}
+      {!isAdmin && <RouteFx lenisRef={lenisRef} />}
+      <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Home lenisRef={lenisRef} />} />
           <Route path="/propiedades" element={<Propiedades />} />
           <Route path="/propiedad/:slug" element={<PropertyDetail />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminProperties />} />
+            <Route path="nueva" element={<PropertyForm />} />
+            <Route path=":id" element={<PropertyForm />} />
+          </Route>
         </Routes>
-        <CamilaBot />
-        <WhatsAppMenu />
+      </Suspense>
+      {!isAdmin && <CamilaBot />}
+      {!isAdmin && <WhatsAppMenu />}
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <LangProvider>
+      <BrowserRouter>
+        <AppInner />
       </BrowserRouter>
     </LangProvider>
   )

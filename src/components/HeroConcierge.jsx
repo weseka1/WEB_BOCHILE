@@ -1,25 +1,27 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import gsap from 'gsap'
-import { PROPERTIES, fmtPrice } from '../data/properties'
+import { fmtPrice } from '../data/properties'
+import { useProperties } from '../lib/PropertiesProvider'
 import { useLang } from '../i18n'
 
 const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
 
-function search(q) {
+function search(props, q) {
   const t = norm(q.trim())
   if (!t) return []
-  return PROPERTIES.filter((p) => norm(`${p.title} ${p.loc} ${p.zone} ${p.type} ${p.badge}`).includes(t)).slice(0, 4)
+  return props.filter((p) => norm(`${p.title} ${p.location} ${p.zone} ${p.type} ${p.badge}`).includes(t)).slice(0, 4)
 }
 
 export default function HeroConcierge({ start }) {
   const { t } = useLang()
+  const { properties } = useProperties()
   const navigate = useNavigate()
   const sect = useRef(null)
   const bg = useRef(null)
   const [q, setQ] = useState('')
   const [focus, setFocus] = useState(false)
-  const results = q ? search(q) : []
+  const results = q ? search(properties, q) : []
 
   // entrada + parallax mouse
   useEffect(() => {

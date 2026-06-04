@@ -7,11 +7,13 @@
   "scripts": {
     "dev": "vite --host --port 4300",
     "catalog": "node scripts/gen-catalog.cjs",
+    "migrate": "node scripts/migrate-to-supabase.cjs",
     "build": "node scripts/gen-catalog.cjs && vite build",
     "preview": "vite preview --port 4300"
   },
   "dependencies": {
     "@gsap/react": "^2.1.1",
+    "@supabase/supabase-js": "^2.45.4",
     "gsap": "^3.12.5",
     "lenis": "^1.1.14",
     "react": "^18.3.1",

@@ -11,6 +11,13 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "20"
+      # Supabase — cargá los valores en el dashboard de Render (Environment).
+      # La anon key es pública por diseño (la seguridad la da RLS). NUNCA pongas
+      # acá la service_role key: esa solo se usa local para la migración.
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
     # SPA: cualquier ruta que no sea un archivo real cae en index.html
     # (sin esto, entrar/refrescar en /propiedades o /propiedad/:slug da 404)
     routes:

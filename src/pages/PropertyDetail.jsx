@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { findProp, fmtPrice, waTo } from '../data/properties'
+import { findInList, fmtPrice, waTo } from '../data/properties'
+import { useProperties } from '../lib/PropertiesProvider'
 import { useLang } from '../i18n'
 import PropertyMap from '../components/PropertyMap'
 import VideoLightbox from '../components/VideoLightbox'
@@ -11,7 +12,8 @@ const PlayIcon = () => (<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden
 export default function PropertyDetail() {
   const { slug } = useParams()
   const { t } = useLang()
-  const p = findProp(slug)
+  const { properties, loading } = useProperties()
+  const p = findInList(properties, slug)
   const [i, setI] = useState(0)
   const [lb, setLb] = useState(-1)
   const [vlb, setVlb] = useState(-1)   // recorrido en video abierto (índice) · -1 = cerrado
@@ -23,7 +25,12 @@ export default function PropertyDetail() {
     window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k)
   }, [lb, p])
 
-  if (!p) return <div className="detail"><div className="detail-top"><Link className="detail-back" to="/propiedades">← {t.detail.back}</Link></div><div className="cat-empty">{t.detail.notfound}</div></div>
+  if (!p) return (
+    <div className="detail">
+      <div className="detail-top"><Link className="detail-back" to="/propiedades">← {t.detail.back}</Link></div>
+      <div className="cat-empty">{loading ? '…' : t.detail.notfound}</div>
+    </div>
+  )
 
   const imgs = p.images
   const videos = p.videos || []

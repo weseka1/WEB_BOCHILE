@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FEATURED, fmtPrice } from '../data/properties'
+import { fmtPrice } from '../data/properties'
+import { useProperties } from '../lib/PropertiesProvider'
 import { useLang } from '../i18n'
 import PropertyCard from './PropertyCard'
 import VideoLightbox from './VideoLightbox'
@@ -51,7 +52,8 @@ function Spotlight({ p }) {
 
 export default function FeaturedProps() {
   const { t } = useLang()
-  const [hero, ...rest] = FEATURED
+  const { featured, loading } = useProperties()
+  const [hero, ...rest] = featured
   return (
     <section className="section wrap" id="propiedades">
       <div className="sec-head">
@@ -62,11 +64,21 @@ export default function FeaturedProps() {
         <p className="sec-sub reveal">{t.props.sub}</p>
       </div>
 
-      {hero && <Spotlight p={hero} />}
-
-      <div className="feat-grid">
-        {rest.map((p) => <PropertyCard key={p.id} p={p} />)}
-      </div>
+      {loading && featured.length === 0 ? (
+        <>
+          <div className="spot skel-spot" aria-hidden="true" />
+          <div className="feat-grid">
+            {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skel-card" aria-hidden="true" />)}
+          </div>
+        </>
+      ) : (
+        <>
+          {hero && <Spotlight p={hero} />}
+          <div className="feat-grid">
+            {rest.map((p) => <PropertyCard key={p.id} p={p} />)}
+          </div>
+        </>
+      )}
 
       <Link className="viewall reveal" to="/propiedades" data-cursor>
         {t.props.viewall} <Arrow />

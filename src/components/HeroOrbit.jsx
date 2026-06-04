@@ -2,7 +2,8 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Link } from 'react-router-dom'
-import { EXCLUSIVES, fmtPrice, heroTitle } from '../data/properties'
+import { fmtPrice, heroTitle } from '../data/properties'
+import { useProperties } from '../lib/PropertiesProvider'
 
 const SLOTS = [
   { x: 66, y: 38, depth: 2.2, rot: -2, scale: 1.06 },
@@ -11,6 +12,7 @@ const SLOTS = [
 ]
 
 export default function HeroOrbit({ active }) {
+  const { exclusives: EXCLUSIVES } = useProperties()
   const root = useRef(null)
   const cards = useRef([])
   cards.current = []

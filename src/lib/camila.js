@@ -1,6 +1,6 @@
 // "Cerebro" local de Camila Virtual — intención + búsqueda por texto/dirección + filtros, sobre las props reales.
-// Arquitectura lista para upgrade: reemplazar camilaReply() por una llamada al backend/Claude API.
-import { PROPERTIES, fmtPrice } from '../data/properties'
+// Las propiedades llegan por parámetro (las trae useProperties() desde Supabase) — antes era un import estático.
+import { fmtPrice } from '../data/properties'
 
 const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
 
@@ -22,7 +22,7 @@ function tokens(t) {
   return [...new Set(t.split(/[^a-z0-9áéíóúñ]+/i).map(norm).filter((w) => w.length >= 2 && !STOP.has(w)))]
 }
 
-export function camilaReply(input, lang = 'es') {
+export function camilaReply(input, lang = 'es', properties = []) {
   const t = norm(input)
   const EN = lang === 'en'
   const L = (es, en) => (EN ? en : es)
@@ -40,7 +40,7 @@ export function camilaReply(input, lang = 'es') {
   }
 
   // ---- filtros explícitos ----
-  let res = PROPERTIES.slice()
+  let res = properties.slice()
   const crit = []
   if (/(depto|departamento|apartment|flat)/.test(t)) { res = res.filter((p) => p.type === 'Departamento' || p.type === 'PH'); crit.push(L('departamentos', 'apartments')) }
   else if (/(duplex|dúplex)/.test(t)) { res = res.filter((p) => p.type === 'Dúplex'); crit.push('dúplex') }
