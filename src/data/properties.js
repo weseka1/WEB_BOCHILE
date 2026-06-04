@@ -43,10 +43,20 @@ const parseAreaTotal = (p) => {
 const POZO_RX = /(en pozo|de pozo|desde pozo|preventa|pre-venta|en construcci|en obra|fideicomiso|en ejecuci|pr[oó]xima entrega|en desarrollo)/i
 export const isPozo = (p) => POZO_RX.test(`${p.title || ''} ${p.description || ''} ${p.priceText || ''}`)
 
+// Curaduría de títulos para la vitrina web — pulimos algunos títulos crudos del
+// scraper (mayúsculas gritadas, "exclusivo") a una redacción más fina y premium.
+// Keyed por ID (estable) → sobrevive a un re-scrapeo. NO afecta el catálogo de
+// Camila (que se genera del JSON crudo y sigue matcheando por el título original).
+const TITLE_OVERRIDES = {
+  '26292': 'Semipiso de categoría · Alem 127',          // antes: "EXCLUSIVO SEMIPISO EN VENTA | ALEM 127"
+  '25711': 'Torre Manantiales · Piso de categoría',     // antes: "…– Exclusivo piso en venta"
+}
+
 // Normalizo al shape que usan los componentes + conservo los campos de detalle.
 // El JSON ya trae: city, barrio, location ("city · barrio" display), zone (barrio||city para filtrar).
 export const PROPERTIES = raw.map((p) => ({
   ...p,
+  title: TITLE_OVERRIDES[p.id] || p.title,   // título pulido para la web (curaduría)
   type: p.typeLabel,        // display + filtro
   badge: p.typeLabel,       // tag = tipo (filtros por ciudad, no por barrio)
   pozo: isPozo(p),          // condición "en pozo" (preventa/construcción) derivada del texto

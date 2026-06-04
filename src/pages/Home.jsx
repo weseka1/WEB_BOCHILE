@@ -9,10 +9,10 @@ export default function Home({ lenisRef }) {
   return (
     <>
       <HeroEnter lenisRef={lenisRef} />
-      <Servicios />
       <FeaturedProps />
       <Marca />
       <Tasacion />
+      <Servicios />
       <Contacto />
     </>
   )
