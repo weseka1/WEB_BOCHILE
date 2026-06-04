@@ -35,6 +35,7 @@ export default function PropertyCard({ p }) {
           <span className="pcard-badge">{p.badge}</span>
         </div>
         {p.images.length > 1 && <span className="pcard-photos">⊞ {p.images.length}</span>}
+        {p.videos?.length > 0 && <span className="pcard-video">▶ Video</span>}
       </div>
       <div className="pcard-body">
         <div className="pcard-price">{fmtPrice(p)}</div>

@@ -30,4 +30,8 @@ public/assets/hero/intro-casa-mobile.mp4
 public/assets/hero/intro-drone.mp4
 public/assets/video/
 public/assets/stock/
-public/assets/props/
+# props/: fotos sueltas viejas sin usar quedan locales, PERO los recorridos en
+# video publicados (+ su poster) SÍ van a la web. Convención: <slug>.mp4 / <slug>-poster.jpg
+public/assets/props/*
+!public/assets/props/*.mp4
+!public/assets/props/*-poster.jpg

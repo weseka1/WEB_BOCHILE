@@ -16,7 +16,7 @@ export const wa = (text) => waTo('general', text)
 export const waAreaMsg = (area, lang = 'es') => ({
   ventas:     lang === 'en' ? 'Hi, I have a question about a property for sale.' : 'Hola, quiero consultar por una propiedad en venta.',
   alquileres: lang === 'en' ? 'Hi, I’m looking for a rental property.'          : 'Hola, estoy buscando una propiedad en alquiler.',
-  tasaciones: lang === 'en' ? 'Hi, I’d like to request a free valuation.'       : 'Hola, quiero solicitar una tasación sin cargo.',
+  tasaciones: lang === 'en' ? 'Hi, I’d like to request a property valuation.'    : 'Hola, quiero solicitar una tasación de mi propiedad.',
   general:    lang === 'en' ? 'Hi, I have a question.'                           : 'Hola, tengo una consulta.',
 }[area] || '')
 
@@ -52,11 +52,25 @@ const TITLE_OVERRIDES = {
   '25711': 'Torre Manantiales · Piso de categoría',     // antes: "…– Exclusivo piso en venta"
 }
 
+// Recorridos en VIDEO por propiedad (self-hosted en /assets/props/, igual que el hero).
+// Array → una propiedad puede tener varios videos (ej: exterior + interior), cada uno
+// se muestra como card. Keyed por ID (estable) → sobrevive a un re-scrapeo, no toca el
+// dato crudo ni el catálogo de Camila. PARA PUBLICAR UNA PROPIEDAD CON VIDEO:
+//   1) Transcodificá a H.264 .mp4 web-optimizado (vertical 9:16 ok) y guardalo en public/assets/props/
+//   2) Agregá su ID acá con uno o más {label, src, poster}. poster opcional (cae a la foto principal).
+const VIDEO_OVERRIDES = {
+  '25333': [   // Ramón y Cajal 3600 — Barrio Patagonia
+    { label: 'Exterior', src: '/assets/props/ramon-y-cajal-3600-exterior.mp4', poster: '/assets/props/ramon-y-cajal-3600-exterior-poster.jpg' },
+    { label: 'Interior', src: '/assets/props/ramon-y-cajal-3600-interior.mp4', poster: '/assets/props/ramon-y-cajal-3600-interior-poster.jpg' },
+  ],
+}
+
 // Normalizo al shape que usan los componentes + conservo los campos de detalle.
 // El JSON ya trae: city, barrio, location ("city · barrio" display), zone (barrio||city para filtrar).
 export const PROPERTIES = raw.map((p) => ({
   ...p,
   title: TITLE_OVERRIDES[p.id] || p.title,   // título pulido para la web (curaduría)
+  videos: VIDEO_OVERRIDES[p.id] || null,     // recorridos en video (array {label,src,poster}) o null
   type: p.typeLabel,        // display + filtro
   badge: p.typeLabel,       // tag = tipo (filtros por ciudad, no por barrio)
   pozo: isPozo(p),          // condición "en pozo" (preventa/construcción) derivada del texto
@@ -102,8 +116,8 @@ export const EXCLUSIVES = PROPERTIES
 // El [0] es el "spotlight" estrella. Si un ID desaparece tras un re-scrapeo, se
 // completa con las más caras (con fotos) para que la sección nunca quede corta.
 const FEATURED_IDS = [
-  '26292', // Alem 127 — Exclusivo semipiso · US$750k (ESTRELLA)
-  '25333', // Ramón y Cajal 3600 — Casa, Barrio Patagonia · US$650k
+  '25333', // Ramón y Cajal 3600 — Casa con RECORRIDO EN VIDEO (ESTRELLA / spotlight)
+  '26292', // Alem 127 — Semipiso de categoría · US$750k
   '25711', // Torre Manantiales — Exclusivo piso · US$680k
   '25087', // Sauce Grande — Casa frente al mar · US$450k
   '22488', // Florida 1000 — Casa · US$380k

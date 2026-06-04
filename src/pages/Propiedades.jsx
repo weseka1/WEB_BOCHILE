@@ -20,7 +20,7 @@ export default function Propiedades() {
   const priceMax = op === 'rent' ? RENT_MAX : SALE_MAX
   const priceStep = op === 'rent' ? 100000 : 10000
   const currency = op === 'rent' ? 'ars' : 'usd'
-  const [type, setType] = useState('')
+  const [type, setType] = useState(sp.get('type') || '')   // permite deep-link desde "Empresas" (?type=Galpón)
   const [zone, setZone] = useState('')
   const [lo, setLo] = useState(0)
   const [hi, setHi] = useState(priceMax)

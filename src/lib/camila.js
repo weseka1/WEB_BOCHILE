@@ -35,8 +35,8 @@ export function camilaReply(input, lang = 'es') {
     }
   }
   if (/(tasa|valuar|cuanto vale mi|valuation|apprais|worth)/.test(t)) {
-    return { text: L('¡Genial! Hacemos tasación profesional sin cargo. Tocá "Tasación" y coordinamos por WhatsApp, o pasame tipo y zona.',
-      'Great! We offer a free professional valuation. Tap "Valuation" and we’ll arrange it on WhatsApp, or send me the type and area.'), goto: '#tasacion' }
+    return { text: L('¡Genial! Hacemos tasación profesional. Tocá "Tasación" y coordinamos por WhatsApp, o pasame tipo y zona.',
+      'Great! We offer professional valuations. Tap "Valuation" and we’ll arrange it on WhatsApp, or send me the type and area.'), goto: '#tasacion' }
   }
 
   // ---- filtros explícitos ----
