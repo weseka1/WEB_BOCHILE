@@ -1,66 +1,41 @@
 import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
 import { supabase, hasSupabase } from './supabase'
 import { fromRow, buildCatalog, buildFeatured, buildExclusives } from '../data/properties'
+import { LEGACY_PROPERTIES } from '../data/legacyProperties'
 
-// Capa de datos de la web pública — diseñada para que NUNCA se cuelgue:
-//   1) Caché local (localStorage): visitas siguientes renderizan al instante.
-//   2) Stale-while-revalidate: muestra lo cacheado y refresca en segundo plano.
-//   3) Timeout de seguridad: si Supabase tarda, cae al catálogo local empaquetado.
-//   4) Fallback total: ante error/sin-config, usa ./data/legacyProperties.
+// Capa de datos de la web pública — IMPOSIBLE que se cuelgue:
+//   • Arranca SIEMPRE con datos: caché local (visitas previas) o el catálogo
+//     empaquetado en la app (LEGACY_PROPERTIES). Cero espera, cero skeleton, cero red.
+//   • Supabase solo REFRESCA en segundo plano (stale-while-revalidate) y guarda caché.
+//   • Si Supabase falla o tarda, no importa: la web ya está mostrando las propiedades.
 const Ctx = createContext(null)
 
 // Columnas livianas para el LISTADO (sin la descripción larga). La ficha pide el resto.
 const LIST_COLS = 'id,slug,op,type,type_label,title,price,price_text,currency,city,barrio,zone,address,location,area,area_total,beds,baths,features,images,main_image,videos,badge,pozo,featured,featured_rank,exclusive,published,url'
-const CACHE_KEY = 'bochile_props_v1'
-const TIMEOUT_MS = 4000
+const CACHE_KEY = 'bochile_props_v2'
 
 const readCache = () => {
   try { const r = JSON.parse(localStorage.getItem(CACHE_KEY)); return Array.isArray(r) && r.length ? r : null } catch { return null }
 }
-const writeCache = (arr) => { try { localStorage.setItem(CACHE_KEY, JSON.stringify(arr)) } catch { /* quota/privado: ignorar */ } }
+const writeCache = (arr) => { try { localStorage.setItem(CACHE_KEY, JSON.stringify(arr)) } catch { /* quota/privado */ } }
 
 export function PropertiesProvider({ children }) {
-  // Lazy init: leemos la caché UNA sola vez al montar (no en cada render).
-  const [properties, setProperties] = useState(() => readCache() || [])
-  const [loading, setLoading] = useState(() => readCache() == null)
+  // Seed instantáneo: caché si existe, sino el catálogo empaquetado. SIEMPRE hay datos.
+  const [properties, setProperties] = useState(() => readCache() || LEGACY_PROPERTIES)
   const [error, setError] = useState(null)
 
-  const loadFallback = useCallback(async () => {
-    try {
-      const { LEGACY_PROPERTIES } = await import('../data/legacyProperties')
-      setProperties((prev) => (prev.length ? prev : LEGACY_PROPERTIES))
-    } catch { /* noop */ }
-  }, [])
-
   const load = useCallback(async () => {
+    if (!hasSupabase) return
     setError(null)
-    const haveCache = !!readCache()
-    if (!haveCache) setLoading(true)
-
-    if (!hasSupabase) { await loadFallback(); setLoading(false); return }
-
-    let done = false
-    // Red de seguridad SOLO en primera visita (sin caché): si tarda, mostramos el catálogo local.
-    const guard = haveCache ? null : setTimeout(() => {
-      if (!done) loadFallback().then(() => setLoading(false))
-    }, TIMEOUT_MS)
-
     try {
-      const { data, error: err } = await supabase
-        .from('properties').select(LIST_COLS).eq('published', true)
-      done = true; if (guard) clearTimeout(guard)
+      const { data, error: err } = await supabase.from('properties').select(LIST_COLS).eq('published', true)
       if (err) throw err
       const mapped = (data || []).map(fromRow)
       if (mapped.length) { setProperties(mapped); writeCache(mapped) }
-      else if (!haveCache) await loadFallback()
-      setLoading(false)
     } catch (e) {
-      done = true; if (guard) clearTimeout(guard)
-      setError(e)
-      if (!haveCache) await loadFallback()   // sin caché ni red → catálogo local
-      setLoading(false)
+      setError(e)   // seguimos mostrando lo que ya teníamos (caché / catálogo local)
     }
-  }, [loadFallback])
+  }, [])
 
   useEffect(() => { load() }, [load])
 
@@ -69,10 +44,10 @@ export function PropertiesProvider({ children }) {
     catalog: buildCatalog(properties),
     featured: buildFeatured(properties),
     exclusives: buildExclusives(properties),
-    loading,
+    loading: false,   // nunca arrancamos sin datos
     error,
     reload: load,
-  }), [properties, loading, error, load])
+  }), [properties, error, load])
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

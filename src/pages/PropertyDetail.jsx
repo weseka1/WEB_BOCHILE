@@ -13,26 +13,28 @@ const PlayIcon = () => (<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden
 export default function PropertyDetail() {
   const { slug } = useParams()
   const { t } = useLang()
-  const { properties, loading } = useProperties()
+  const { properties } = useProperties()
   const fromList = findInList(properties, slug)
   const [full, setFull] = useState(null)   // fila completa (con descripción) traída aparte
-  const p = full || fromList                // mostramos lo del listado al instante; la descripción llega después
+  const [checking, setChecking] = useState(true)
+  const p = full || fromList                // mostramos lo del catálogo al instante; la descripción llega después
   const [i, setI] = useState(0)
   const [lb, setLb] = useState(-1)
   const [vlb, setVlb] = useState(-1)   // recorrido en video abierto (índice) · -1 = cerrado
 
   useEffect(() => { setI(0); setVlb(-1); window.scrollTo(0, 0) }, [slug])
 
-  // Traemos la fila completa (descripción + todo) una vez que sabemos el id.
+  // Traemos la fila completa (descripción + todo) por slug. Funciona aunque la
+  // propiedad sea nueva y todavía no esté en el catálogo local.
   useEffect(() => {
-    setFull(null)
-    const id = fromList?.id
-    if (!hasSupabase || !id) return
+    setFull(null); setChecking(true)
+    if (!hasSupabase) { setChecking(false); return }
     let alive = true
-    supabase.from('properties').select('*').eq('id', id).maybeSingle()
-      .then(({ data }) => { if (alive && data) setFull(fromRow(data)) })
+    supabase.from('properties').select('*').eq('slug', slug).eq('published', true).maybeSingle()
+      .then(({ data }) => { if (!alive) return; if (data) setFull(fromRow(data)); setChecking(false) })
+      .catch(() => { if (alive) setChecking(false) })
     return () => { alive = false }
-  }, [slug, fromList?.id])
+  }, [slug])
   useEffect(() => {
     if (lb < 0) return
     const k = (e) => { if (e.key === 'Escape') setLb(-1); if (e.key === 'ArrowRight') setLb((x) => (x + 1) % p.images.length); if (e.key === 'ArrowLeft') setLb((x) => (x - 1 + p.images.length) % p.images.length) }
@@ -42,7 +44,7 @@ export default function PropertyDetail() {
   if (!p) return (
     <div className="detail">
       <div className="detail-top"><Link className="detail-back" to="/propiedades">← {t.detail.back}</Link></div>
-      <div className="cat-empty">{loading ? '…' : t.detail.notfound}</div>
+      <div className="cat-empty">{checking ? '…' : t.detail.notfound}</div>
     </div>
   )
 
