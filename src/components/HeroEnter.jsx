@@ -6,6 +6,12 @@ import { useLang } from '../i18n'
 
 const QA = typeof location !== 'undefined' && location.search.includes('qa')
 
+// El intro (contador 1970→2026 con pantalla negra) se reproduce UNA sola vez por
+// sesión. Al navegar y volver al inicio NO se repite (sino la home "se cuelga" en
+// negro cada vez que volvés). Se guarda en sessionStorage → sobrevive a refresh.
+const introSeen = () => { try { return sessionStorage.getItem('bochile_intro') === '1' } catch { return false } }
+const markIntro = () => { try { sessionStorage.setItem('bochile_intro', '1') } catch { /* noop */ } }
+
 // Intro: el dron agresivo de fondo + la "carga" 1970 → 2026 (medio siglo).
 // El contador corre por TIEMPO (no depende del video) → la intro nunca se cuelga.
 export default function HeroEnter({ lenisRef }) {
@@ -50,12 +56,23 @@ export default function HeroEnter({ lenisRef }) {
         ScrollTrigger.refresh()
       }
 
-      if (QA || reduce) {
+      // Sin intro: primera vez ya vista (volver al inicio), QA, o reduce-motion.
+      // Forzamos el contenido VISIBLE al instante (sin animar, sin guards) y
+      // soltamos cualquier lock/scroll trabado. Robusto ante StrictMode/re-mount.
+      if (QA || reduce || introSeen()) {
         if (count.current) count.current.style.display = 'none'
-        reveal()
+        document.body.classList.remove('loading')
+        lenisRef?.current?.start?.()
+        shown.current = true
+        gsap.set(['.enter-scrim', '.enter-logo', '.enter-name', '.enter-rule', '.enter-headline', '.enter-sub', '.enter-cta', '.enter-cue', '.hero-eyebrow'],
+          { opacity: 1, y: 0, scaleX: 1, filter: 'blur(0px)', clearProps: 'transform' })
+        gsap.to(v, { yPercent: 10, ease: 'none', scrollTrigger: { trigger: r, start: 'top top', end: 'bottom top', scrub: true } })
+        const p = v.play?.(); if (p && p.catch) p.catch(() => {})
         return
       }
 
+      // Primera vez en la sesión: reproducir intro (y marcar para no repetirlo).
+      markIntro()
       // Lock breve del scroll durante la intro (se suelta SIEMPRE al terminar el contador).
       document.body.classList.add('loading')
       const stopLenis = () => { if (lenisRef?.current) lenisRef.current.stop(); else requestAnimationFrame(stopLenis) }
@@ -80,7 +97,7 @@ export default function HeroEnter({ lenisRef }) {
       guard = setTimeout(() => { release(); reveal() }, 4200)
     }, root)
 
-    return () => { clearTimeout(guard); ctx.revert() }
+    return () => { clearTimeout(guard); document.body.classList.remove('loading'); ctx.revert() }
   }, [])
 
   return (
