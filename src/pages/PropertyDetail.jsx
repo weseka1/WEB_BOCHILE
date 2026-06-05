@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { findInList, fmtPrice, waTo } from '../data/properties'
+import { findInList, fromRow, fmtPrice, waTo } from '../data/properties'
 import { useProperties } from '../lib/PropertiesProvider'
+import { supabase, hasSupabase } from '../lib/supabase'
 import { useLang } from '../i18n'
 import PropertyMap from '../components/PropertyMap'
 import VideoLightbox from '../components/VideoLightbox'
@@ -13,12 +14,25 @@ export default function PropertyDetail() {
   const { slug } = useParams()
   const { t } = useLang()
   const { properties, loading } = useProperties()
-  const p = findInList(properties, slug)
+  const fromList = findInList(properties, slug)
+  const [full, setFull] = useState(null)   // fila completa (con descripción) traída aparte
+  const p = full || fromList                // mostramos lo del listado al instante; la descripción llega después
   const [i, setI] = useState(0)
   const [lb, setLb] = useState(-1)
   const [vlb, setVlb] = useState(-1)   // recorrido en video abierto (índice) · -1 = cerrado
 
   useEffect(() => { setI(0); setVlb(-1); window.scrollTo(0, 0) }, [slug])
+
+  // Traemos la fila completa (descripción + todo) una vez que sabemos el id.
+  useEffect(() => {
+    setFull(null)
+    const id = fromList?.id
+    if (!hasSupabase || !id) return
+    let alive = true
+    supabase.from('properties').select('*').eq('id', id).maybeSingle()
+      .then(({ data }) => { if (alive && data) setFull(fromRow(data)) })
+    return () => { alive = false }
+  }, [slug, fromList?.id])
   useEffect(() => {
     if (lb < 0) return
     const k = (e) => { if (e.key === 'Escape') setLb(-1); if (e.key === 'ArrowRight') setLb((x) => (x + 1) % p.images.length); if (e.key === 'ArrowLeft') setLb((x) => (x - 1 + p.images.length) % p.images.length) }
