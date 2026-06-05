@@ -38,6 +38,15 @@ export default function AdminProperties() {
     setBusyId(null)
   }
 
+  const toggleFeat = async (p) => {
+    setBusyId(p.id)
+    const nextRank = p.featured ? null : (Math.max(-1, ...rows.filter((r) => r.featured).map((r) => r.featuredRank ?? 0)) + 1)
+    const { error } = await supabase.from('properties').update({ featured: !p.featured, featured_rank: nextRank }).eq('id', p.id)
+    if (error) setErr(error.message)
+    else setRows((rs) => rs.map((r) => (r.id === p.id ? { ...r, featured: !r.featured, featuredRank: nextRank } : r)))
+    setBusyId(null)
+  }
+
   const remove = async (p) => {
     if (!confirm(`¿Eliminar definitivamente "${p.title}"?\n\nSi solo querés sacarla de la web, usá "Bajar" (queda guardada).`)) return
     setBusyId(p.id)
@@ -108,6 +117,10 @@ export default function AdminProperties() {
                 </button>
               </span>
               <span className="adm-actions">
+                <button className={'adm-btn sm star' + (p.featured ? ' on' : '')} disabled={busyId === p.id}
+                  onClick={() => toggleFeat(p)} title={p.featured ? 'Quitar de destacadas' : 'Marcar como destacada'}>
+                  {p.featured ? '★' : '☆'}
+                </button>
                 <Link to={`/admin/${p.id}`} className="adm-btn sm">Editar</Link>
                 <button className="adm-btn sm danger" disabled={busyId === p.id} onClick={() => remove(p)}>Eliminar</button>
               </span>

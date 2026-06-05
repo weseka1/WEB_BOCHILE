@@ -15,6 +15,7 @@ import PropertyDetail from './pages/PropertyDetail'
 // Panel admin: lazy → no infla el bundle de la web pública.
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
 const AdminProperties = lazy(() => import('./pages/admin/AdminProperties'))
+const AdminFeatured = lazy(() => import('./pages/admin/AdminFeatured'))
 const PropertyForm = lazy(() => import('./pages/admin/PropertyForm'))
 
 gsap.registerPlugin(ScrollTrigger)
@@ -97,6 +98,7 @@ function AppInner() {
           <Route path="/propiedad/:slug" element={<PropertyDetail />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminProperties />} />
+            <Route path="destacadas" element={<AdminFeatured />} />
             <Route path="nueva" element={<PropertyForm />} />
             <Route path=":id" element={<PropertyForm />} />
           </Route>

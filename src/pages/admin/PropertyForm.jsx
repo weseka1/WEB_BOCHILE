@@ -259,12 +259,15 @@ export default function PropertyForm() {
         <section className="adm-card adm-col-2">
           <h3>Publicación</h3>
           <div className="adm-checks">
-            <label className="adm-check"><input type="checkbox" checked={f.published} onChange={set('published')} /> Publicada (visible en la web)</label>
-            <label className="adm-check"><input type="checkbox" checked={f.featured} onChange={set('featured')} /> Destacada (home)</label>
-            <label className="adm-check"><input type="checkbox" checked={f.exclusive} onChange={set('exclusive')} /> Exclusiva</label>
-            <label className="adm-check"><input type="checkbox" checked={f.pozo} onChange={set('pozo')} /> En pozo</label>
-            {f.featured && <label className="adm-rank">Orden destacada<input type="number" value={f.featured_rank} onChange={set('featured_rank')} placeholder="0 = spotlight" /></label>}
+            <label className="adm-check"><input type="checkbox" checked={f.published} onChange={set('published')} /> Publicada <span className="adm-hint">visible en la web</span></label>
+            <label className="adm-check"><input type="checkbox" checked={f.featured} onChange={set('featured')} /> Destacada <span className="adm-hint">aparece en la home</span></label>
+            <label className="adm-check"><input type="checkbox" checked={f.pozo} onChange={set('pozo')} /> En pozo <span className="adm-hint">preventa / construcción</span></label>
           </div>
+          {f.featured && (
+            <div className="adm-feat-hint">
+              Para elegir el <b>orden</b> de las destacadas y cuál es la <b>estrella</b> (la card grande), usá la sección <b>⭐ Destacadas</b> del menú de arriba — se ve mucho más fácil ahí.
+            </div>
+          )}
         </section>
 
         <div className="adm-form-foot adm-col-2">
