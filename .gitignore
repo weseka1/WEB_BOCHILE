@@ -40,3 +40,7 @@ public/assets/stock/
 public/assets/props/*
 !public/assets/props/*.mp4
 !public/assets/props/*-poster.jpg
+
+# temporales de carga de datos
+_*.py
+_*.txt
