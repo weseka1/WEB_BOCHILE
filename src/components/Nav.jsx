@@ -38,6 +38,7 @@ export default function Nav() {
       <Link to="/propiedades?op=rent" data-cursor onClick={() => setOpen(false)}>{t.nav.alquilar}</Link>
       <Link to="/#tasacion" data-cursor onClick={() => setOpen(false)}>{t.nav.tasaciones}</Link>
       <Link to="/#empresas" data-cursor onClick={() => setOpen(false)}>{t.nav.empresas}</Link>
+      <Link to="/#inversion" data-cursor onClick={() => setOpen(false)}>{t.nav.inversion}</Link>
       <Link to="/#nosotros" data-cursor onClick={() => setOpen(false)}>{t.nav.nosotros}</Link>
       <Link to="/#contacto" data-cursor onClick={() => setOpen(false)}>{t.nav.contacto}</Link>
     </>

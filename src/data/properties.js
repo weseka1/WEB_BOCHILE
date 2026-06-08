@@ -8,6 +8,8 @@ export const WA = {
   ventas:     '5492915770521',   // +54 9 291 577 0521
   alquileres: '5492915074095',
   tasaciones: '5492915770521',   // misma línea que ventas (tasar = captar para vender)
+  galpones:   '5492914022077',   // Maxi — galpones / naves / pedidos especiales (+54 9 291 402-2077)
+  vacamuerta: '5492915770003',   // Karina — Vaca Muerta / inversiones Neuquén (+54 9 291 577-0003)
   general:    '542914537816',    // 291 453-7816
 }
 export const waTo = (area, text) => `https://wa.me/${WA[area] || WA.general}?text=${encodeURIComponent(text || '')}`
@@ -18,6 +20,8 @@ export const waAreaMsg = (area, lang = 'es') => ({
   ventas:     lang === 'en' ? 'Hi, I have a question about a property for sale.' : 'Hola, quiero consultar por una propiedad en venta.',
   alquileres: lang === 'en' ? 'Hi, I’m looking for a rental property.'          : 'Hola, estoy buscando una propiedad en alquiler.',
   tasaciones: lang === 'en' ? 'Hi, I’d like to request a property valuation.'    : 'Hola, quiero solicitar una tasación de mi propiedad.',
+  galpones:   lang === 'en' ? 'Hi, I have a question about a warehouse / industrial space or a special request.' : 'Hola, quiero consultar por un galpón / depósito o un pedido especial.',
+  vacamuerta: lang === 'en' ? 'Hi, I’m interested in real estate investment (Vaca Muerta / energy / industrial parks).' : 'Hola, quiero consultar por inversión inmobiliaria (Vaca Muerta / energía / parques industriales).',
   general:    lang === 'en' ? 'Hi, I have a question.'                           : 'Hola, tengo una consulta.',
 }[area] || '')
 

@@ -17,7 +17,7 @@ const PlayIcon = () => (<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden
 function Spotlight({ p }) {
   const { t } = useLang()
   const [open, setOpen] = useState(false)
-  const beds = p.type === 'Departamento' || p.type === 'PH' ? 'amb.' : 'dorm.'
+  const beds = 'dorm.'
   const hasVideo = p.videos?.length > 0
   return (
     <article className="spot reveal" data-cursor>

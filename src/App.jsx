@@ -24,17 +24,27 @@ const QA = typeof location !== 'undefined' && location.search.includes('qa')
 function RouteFx({ lenisRef }) {
   const loc = useLocation()
   useEffect(() => {
-    if (loc.hash) {
-      const el = document.querySelector(loc.hash)
-      if (el) { setTimeout(() => lenisRef.current?.scrollTo(el, { offset: -70 }), 200); return }
-    }
-    lenisRef.current?.scrollTo(0, { immediate: true })
-    window.scrollTo(0, 0)
-    if (QA) gsap.set('.reveal', { opacity: 1, y: 0 })
+    // El batch de reveal se configura SIEMPRE. (Antes, si la URL traía un hash se
+    // hacía `return` antes de crearlo → ninguna sección se revelaba y, al entrar o
+    // recargar en un ancla como #contacto, se veía el cascarón vacío.)
     const b = ScrollTrigger.batch('.reveal', {
       start: 'top 90%',
       onEnter: (els) => gsap.to(els, { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.06, overwrite: true }),
     })
+
+    // QA o deep-link a una sección: mostramos todo de una (sin esperar el scroll)
+    // para que NUNCA se vea vacío; igual scrolleamos hasta el ancla.
+    if (QA || loc.hash) {
+      gsap.set('.reveal', { opacity: 1, y: 0 })
+      if (loc.hash) {
+        const el = document.querySelector(loc.hash)
+        if (el) setTimeout(() => lenisRef.current?.scrollTo(el, { offset: -70 }), 200)
+      }
+    } else {
+      lenisRef.current?.scrollTo(0, { immediate: true })
+      window.scrollTo(0, 0)
+    }
+
     const t = setTimeout(() => ScrollTrigger.refresh(), 360)
     return () => { b.forEach((s) => s.kill()); clearTimeout(t) }
   }, [loc.pathname])

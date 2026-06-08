@@ -7,7 +7,7 @@ import { useLang } from '../i18n'
 export default function PropertyCard({ p }) {
   const { t } = useLang()
   const ref = useRef(null)
-  const beds = p.type === 'Departamento' || p.type === 'PH' ? 'amb.' : 'dorm.'
+  const beds = 'dorm.'
 
   // Tilt 3D + luz que sigue el cursor (futurista).
   const onMove = (e) => {
