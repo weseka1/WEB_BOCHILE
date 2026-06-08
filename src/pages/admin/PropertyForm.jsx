@@ -16,7 +16,7 @@ const EMPTY = {
   id: '', slug: '', op: 'sale', type_label: 'Casa', title: '', description: '',
   price: '', currency: 'USD', city: 'Bahía Blanca', barrio: '', zone: '', address: '',
   area: '', area_total: '', beds: '', baths: '', features: '',
-  images: [], videos: [], pozo: false, featured: false, featured_rank: '', exclusive: false,
+  images: [], videos: [], pozo: false, apto_credito: false, featured: false, featured_rank: '', exclusive: false,
   published: true, url: '',
 }
 
@@ -121,6 +121,7 @@ export default function PropertyForm() {
       main_image: images[0] || null,
       videos: f.videos.filter((v) => v.src),
       pozo: !!f.pozo,
+      apto_credito: !!f.apto_credito,
       featured: !!f.featured,
       featured_rank: f.featured ? (intOrNull(f.featured_rank) ?? 50) : null,
       exclusive: !!f.exclusive,
@@ -262,6 +263,7 @@ export default function PropertyForm() {
             <label className="adm-check"><input type="checkbox" checked={f.published} onChange={set('published')} /> Publicada <span className="adm-hint">visible en la web</span></label>
             <label className="adm-check"><input type="checkbox" checked={f.featured} onChange={set('featured')} /> Destacada <span className="adm-hint">aparece en la home</span></label>
             <label className="adm-check"><input type="checkbox" checked={f.pozo} onChange={set('pozo')} /> En pozo <span className="adm-hint">preventa / construcción</span></label>
+            <label className="adm-check"><input type="checkbox" checked={f.apto_credito} onChange={set('apto_credito')} /> Apto crédito <span className="adm-hint">califica para crédito hipotecario</span></label>
           </div>
           {f.featured && (
             <div className="adm-feat-hint">

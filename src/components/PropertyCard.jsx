@@ -32,6 +32,7 @@ export default function PropertyCard({ p }) {
         <div className="pcard-tags">
           <span className="pcard-op">{p.op === 'sale' ? t.cat.sale : t.cat.rent}</span>
           {p.pozo && <span className="pcard-pozo">{t.cat.pozo}</span>}
+          {p.aptoCredito && <span className="pcard-pozo">{t.cat.credito}</span>}
           <span className="pcard-badge">{p.badge}</span>
         </div>
         {p.images.length > 1 && <span className="pcard-photos">⊞ {p.images.length}</span>}

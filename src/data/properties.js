@@ -77,6 +77,7 @@ export function fromRow(r) {
     img: r.main_image || images[0] || '',
     videos: videos.length ? videos : null,
     pozo: !!r.pozo,
+    aptoCredito: !!r.apto_credito,
     featured: !!r.featured,
     featuredRank: r.featured_rank != null ? Number(r.featured_rank) : null,
     exclusive: !!r.exclusive,

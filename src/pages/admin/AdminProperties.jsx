@@ -105,6 +105,7 @@ export default function AdminProperties() {
                   {p.featured && <em className="fl gold">Destacada</em>}
                   {p.exclusive && <em className="fl">Exclusiva</em>}
                   {p.pozo && <em className="fl green">En pozo</em>}
+                  {p.aptoCredito && <em className="fl green">Apto crédito</em>}
                   <em className="fl">{p.images.length} fotos</em>
                 </span>
               </span>

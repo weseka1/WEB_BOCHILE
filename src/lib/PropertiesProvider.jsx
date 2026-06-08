@@ -11,7 +11,7 @@ import { LEGACY_PROPERTIES } from '../data/legacyProperties'
 const Ctx = createContext(null)
 
 // Columnas livianas para el LISTADO (sin la descripción larga). La ficha pide el resto.
-const LIST_COLS = 'id,slug,op,type,type_label,title,price,price_text,currency,city,barrio,zone,address,location,area,area_total,beds,baths,features,images,main_image,videos,badge,pozo,featured,featured_rank,exclusive,published,url'
+const LIST_COLS = 'id,slug,op,type,type_label,title,price,price_text,currency,city,barrio,zone,address,location,area,area_total,beds,baths,features,images,main_image,videos,badge,pozo,apto_credito,featured,featured_rank,exclusive,published,url'
 const CACHE_KEY = 'bochile_props_v2'
 
 const readCache = () => {
