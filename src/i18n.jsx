@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react'
 
 export const DICT = {
   es: {
-    nav: { comprar: 'Comprar', alquilar: 'Alquilar', tasaciones: 'Tasaciones', empresas: 'Empresas', inversion: 'Inversión & Energía', nosotros: 'Nosotros', contacto: 'Contacto', wa: 'WhatsApp' },
+    nav: { comprar: 'Comprar', alquilar: 'Alquilar', tasaciones: 'Tasaciones', empresas: 'Empresas', inversion: 'Vaca Muerta', nosotros: 'Nosotros', contacto: 'Contacto', wa: 'WhatsApp' },
     hero: {
       eyebrow: 'Real Estate en Bahía Blanca · desde 1970',
       headline: 'El lugar correcto, desde 1970.',
@@ -24,7 +24,7 @@ export const DICT = {
     cat: { kicker: 'Catálogo', title: 'Propiedades', sub: 'Encuentre su próxima propiedad en Bahía Blanca y la región. Filtre por operación, tipo, zona y presupuesto.', op: 'Operación', sale: 'Comprar', rent: 'Alquilar', type: 'Tipo', alltypes: 'Todos los tipos', zone: 'Zona', allzones: 'Toda la región', pozo: 'En pozo', credito: 'Apto crédito', creditoMsg: 'Hola, busco propiedades aptas para crédito hipotecario. ¿Qué opciones tienen disponibles?', price: 'Presupuesto', anyprice: 'Sin límite', upto: 'Hasta', over: 'Más de', search: 'Buscar por nombre, calle o zona…', results: 'propiedades', none: 'No encontramos propiedades con esos filtros. Pruebe ampliar la búsqueda o escríbanos por WhatsApp y la conseguimos.', rentEmpty: 'Estamos renovando nuestra cartera de alquileres.', rentEmptySub: 'Contamos con unidades que aún no publicamos online. Escríbanos por WhatsApp y le ayudamos a encontrar lo que busca — o le avisamos apenas ingresen nuevas.', more: 'Ver más', back: 'Volver al inicio', consultar: 'Consultar' },
     detail: { back: 'Volver al catálogo', photos: 'fotos', description: 'Descripción', features: 'Características', consultar: 'Consultar por WhatsApp', note: 'Lo atiende un asesor de Bochile, sin compromiso.', area: 'Superficie total', beds: 'Dormitorios', amb: 'Ambientes', baths: 'Baños', type: 'Tipo', allphotos: 'Todas las fotos', videoTour: 'Recorrido en video', notfound: 'No encontramos esa propiedad.', location: 'Ubicación', maps: 'Abrir en Maps', streetview: 'Street View', directions: 'Cómo llegar', mapnote: 'Ubicación aproximada según la zona publicada.' },
     camila: { online: 'EN LÍNEA' },
-    waMenu: { title: 'Estamos para ayudarlo', sub: 'Elija el área y un asesor lo atiende por WhatsApp.', ventas: 'Ventas', alquileres: 'Alquileres', tasaciones: 'Tasaciones', galpones: 'Galpones y pedidos especiales', vacamuerta: 'Inversión & Energía', general: 'Consulta general', open: 'Abrir WhatsApp', close: 'Cerrar' },
+    waMenu: { title: 'Estamos para ayudarlo', sub: 'Elija el área y un asesor lo atiende por WhatsApp.', ventas: 'Ventas', alquileres: 'Alquileres', tasaciones: 'Tasaciones', galpones: 'Galpones y pedidos especiales', vacamuerta: 'Vaca Muerta', general: 'Consulta general', open: 'Abrir WhatsApp', close: 'Cerrar' },
     marca: { quote: 'Más de 50 años encontrando el lugar correcto en Bahía Blanca.', sub: 'Desde 1970 acompañamos a cada familia con la misma confianza de siempre. La experiencia avala nuestra trayectoria.', tag: 'Desde 1970 · Bahía Blanca' },
     nosotros: {
       kicker: 'Sobre nosotros',
@@ -59,7 +59,7 @@ export const DICT = {
       ],
     },
     inversion: {
-      kicker: 'Inversión & Energía',
+      kicker: 'Inversión energética',
       title1: 'Vaca', title2: 'Muerta.',
       sub: 'Polo petroquímico, puerto de aguas profundas y parques industriales: Bahía Blanca está en el centro de la inversión energética que conecta la región con el mundo. Acompañamos a las empresas e inversores que buscan su lugar en ese mapa.',
       cta: 'Hablar con nuestro equipo de inversión',
@@ -78,7 +78,7 @@ export const DICT = {
     footer: { rights: '© 2026 Bochile Real Estate · Desde 1970 en Bahía Blanca.', made: 'Sitio por WESEKA.IA' },
   },
   en: {
-    nav: { comprar: 'Buy', alquilar: 'Rent', tasaciones: 'Valuation', empresas: 'Business', inversion: 'Investment & Energy', nosotros: 'About', contacto: 'Contact', wa: 'WhatsApp' },
+    nav: { comprar: 'Buy', alquilar: 'Rent', tasaciones: 'Valuation', empresas: 'Business', inversion: 'Vaca Muerta', nosotros: 'About', contacto: 'Contact', wa: 'WhatsApp' },
     hero: {
       eyebrow: 'Real estate in Bahía Blanca · since 1970',
       headline: 'The right place, since 1970.',
@@ -100,7 +100,7 @@ export const DICT = {
     cat: { kicker: 'Catalogue', title: 'Properties', sub: 'Find your next property in Bahía Blanca and the region. Filter by listing, type, area and budget.', op: 'Listing', sale: 'Buy', rent: 'Rent', type: 'Type', alltypes: 'All types', zone: 'Area', allzones: 'All regions', pozo: 'Off-plan', credito: 'Mortgage-ready', creditoMsg: 'Hi, I’m looking for mortgage-ready properties. What options do you have available?', price: 'Budget', anyprice: 'Any', upto: 'Up to', over: 'Over', search: 'Search by name, street or area…', results: 'properties', none: 'No properties match these filters. Try widening your search or message us on WhatsApp and we’ll find it.', rentEmpty: 'We’re refreshing our rental portfolio.', rentEmptySub: 'We have units not yet listed online. Message us on WhatsApp and we’ll help you find what you’re after — or let you know as soon as new ones come in.', more: 'See more', back: 'Back home', consultar: 'Enquire' },
     detail: { back: 'Back to catalogue', photos: 'photos', description: 'Description', features: 'Features', consultar: 'Enquire on WhatsApp', note: 'A Bochile advisor will assist you, no obligation.', area: 'Total area', beds: 'Bedrooms', amb: 'Rooms', baths: 'Bathrooms', type: 'Type', allphotos: 'All photos', videoTour: 'Video tour', notfound: 'We couldn’t find that property.', location: 'Location', maps: 'Open in Maps', streetview: 'Street View', directions: 'Directions', mapnote: 'Approximate location based on the published area.' },
     camila: { online: 'ONLINE' },
-    waMenu: { title: 'We’re here to help', sub: 'Choose an area and an advisor will assist you on WhatsApp.', ventas: 'Sales', alquileres: 'Rentals', tasaciones: 'Valuations', galpones: 'Warehouses & special requests', vacamuerta: 'Investment & Energy', general: 'General enquiry', open: 'Open WhatsApp', close: 'Close' },
+    waMenu: { title: 'We’re here to help', sub: 'Choose an area and an advisor will assist you on WhatsApp.', ventas: 'Sales', alquileres: 'Rentals', tasaciones: 'Valuations', galpones: 'Warehouses & special requests', vacamuerta: 'Vaca Muerta', general: 'General enquiry', open: 'Open WhatsApp', close: 'Close' },
     marca: { quote: 'Over 50 years finding the right place in Bahía Blanca.', sub: 'Since 1970 we’ve guided every family with the same trust as always. Experience backs our track record.', tag: 'Since 1970 · Bahía Blanca' },
     nosotros: {
       kicker: 'About us',
@@ -135,7 +135,7 @@ export const DICT = {
       ],
     },
     inversion: {
-      kicker: 'Investment & Energy',
+      kicker: 'Energy investment',
       title1: 'Vaca', title2: 'Muerta.',
       sub: 'Petrochemical hub, deep-water port and industrial parks: Bahía Blanca sits at the center of the energy investment connecting the region with the world. We guide the companies and investors looking for their place on that map.',
       cta: 'Talk to our investment team',
