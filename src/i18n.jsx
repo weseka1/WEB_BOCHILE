@@ -65,8 +65,10 @@ export const DICT = {
       cta: 'Hablar con nuestro equipo de inversión',
       waMsg: 'Hola, quiero consultar por inversión inmobiliaria en Bahía Blanca (Vaca Muerta / energía / parques industriales).',
       cats: [
+        { t: 'Fideicomisos', d: 'Invierta en proyectos desde el pozo, con respaldo y escala. Lo coordinamos con un asesor especializado.', to: '' },
+        { t: 'Lotes y terrenos', d: 'Suelo para construir o invertir: lotes urbanos y terrenos estratégicos en la región.', to: '/propiedades?type=Lote / Terreno' },
+        { t: 'Parques industriales', d: 'Suelo estratégico para radicación y expansión de empresas.', to: '/propiedades?type=Lote / Terreno' },
         { t: 'Galpones y naves industriales', d: 'Logística, servicios y operación para la cadena energética.', to: '/propiedades?type=Galpón' },
-        { t: 'Parques industriales y terrenos', d: 'Suelo estratégico para radicación y expansión.', to: '/propiedades?type=Lote / Terreno' },
         { t: 'Oficinas corporativas', d: 'Bases operativas para las empresas que llegan a la región.', to: '/propiedades?type=Oficina' },
         { t: 'Inversión & renta', d: 'Oportunidades para invertir donde la economía crece. Lo coordinamos con un asesor especializado.', to: '' },
       ],
@@ -139,8 +141,10 @@ export const DICT = {
       cta: 'Talk to our investment team',
       waMsg: 'Hi, I’d like to ask about real estate investment in Bahía Blanca (Vaca Muerta / energy / industrial parks).',
       cats: [
+        { t: 'Trust funds (fideicomisos)', d: 'Invest in projects from the ground up, with backing and scale. Coordinated with a specialist advisor.', to: '' },
+        { t: 'Lots & land', d: 'Land to build or invest: urban lots and strategic plots across the region.', to: '/propiedades?type=Lote / Terreno' },
+        { t: 'Industrial parks', d: 'Strategic land for company setup and expansion.', to: '/propiedades?type=Lote / Terreno' },
         { t: 'Warehouses & industrial units', d: 'Logistics, services and operations for the energy chain.', to: '/propiedades?type=Galpón' },
-        { t: 'Industrial parks & land', d: 'Strategic land for setup and expansion.', to: '/propiedades?type=Lote / Terreno' },
         { t: 'Corporate offices', d: 'Operating bases for the companies arriving to the region.', to: '/propiedades?type=Oficina' },
         { t: 'Investment & yield', d: 'Opportunities to invest where the economy is growing. Coordinated with a specialist advisor.', to: '' },
       ],

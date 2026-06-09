@@ -6,12 +6,11 @@ import { useLang } from '../i18n'
 
 const QA = typeof location !== 'undefined' && location.search.includes('qa')
 
-// El intro (contador 1970→2026 con pantalla negra) se reproduce UNA sola vez por
-// NAVEGADOR (localStorage → sobrevive a cerrar/reabrir y refresh). Además, si se
-// entra directo a una sección (URL con #, ej /#empresas) se saltea: el visitante
-// quiere ir ahí, no ver el intro. Así nunca "se cuelga" al navegar/volver.
-const introSeen = () => { try { return localStorage.getItem('bochile_intro_seen') === '1' } catch { return false } }
-const markIntro = () => { try { localStorage.setItem('bochile_intro_seen', '1') } catch { /* noop */ } }
+// El intro (video + contador 1970→2026) corre en CADA carga de la home, para que el video
+// y el contador SIEMPRE arranquen juntos. Antes era "1 vez por navegador", pero el video
+// rearrancaba igual por su cuenta y quedaba sin contador → se veía incoherente.
+// Se saltea SOLO en deep-links a una sección (URL con #, ej /#empresas) y con reduced-motion:
+// ahí el visitante quiere ir directo, no ver el intro.
 const hasHash = () => { try { return !!location.hash } catch { return false } }
 
 // Intro: el dron agresivo de fondo + la "carga" 1970 → 2026 (medio siglo).
@@ -61,7 +60,7 @@ export default function HeroEnter({ lenisRef }) {
       // Sin intro: ya visto, entra a una sección (#hash), QA, o reduce-motion.
       // Forzamos el contenido VISIBLE al instante (sin animar, sin guards) y
       // soltamos cualquier lock/scroll trabado. Robusto ante StrictMode/re-mount.
-      if (QA || reduce || introSeen() || hasHash()) {
+      if (QA || reduce || hasHash()) {
         if (count.current) count.current.style.display = 'none'
         document.body.classList.remove('loading')
         lenisRef?.current?.start?.()
@@ -73,8 +72,6 @@ export default function HeroEnter({ lenisRef }) {
         return
       }
 
-      // Primera vez en la sesión: reproducir intro (y marcar para no repetirlo).
-      markIntro()
       // Lock breve del scroll durante la intro (se suelta SIEMPRE al terminar el contador).
       document.body.classList.add('loading')
       const stopLenis = () => { if (lenisRef?.current) lenisRef.current.stop(); else requestAnimationFrame(stopLenis) }

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef } from 'react'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -64,6 +64,28 @@ function RouteFx({ lenisRef }) {
   return null
 }
 
+// Catch-all: URLs que NO matchean ninguna ruta (deep-links viejos indexados en Google del
+// sitio anterior, typos, etc.) no deben dejar la SPA en negro. Las mapeamos a su equivalente
+// en la web nueva (preserva el tráfico de Google) y, si no se reconoce, caen en la Home.
+function CatchAll() {
+  const { pathname } = useLocation()
+  const p = decodeURIComponent(pathname).toLowerCase()
+  let to = '/'
+  if (/alquil|rent/.test(p)) to = '/propiedades?op=rent'
+  else if (/venta|compr|sale/.test(p)) to = '/propiedades?op=sale'
+  else if (/depto|departamento|apartment|semipiso|monoambiente/.test(p)) to = '/propiedades?type=Departamento'
+  else if (/casa|house|chalet/.test(p)) to = '/propiedades?type=Casa'
+  else if (/lote|terreno|land/.test(p)) to = '/propiedades?type=Lote / Terreno'
+  else if (/galpon|oficina|local|deposito|comercial/.test(p)) to = '/propiedades'
+  else if (/listado|propiedad|inmueble|catalog|buscar/.test(p)) to = '/propiedades'
+  else if (/tasac|valuation/.test(p)) to = '/#tasacion'
+  else if (/inversion|energia|energy|invest/.test(p)) to = '/#inversion'
+  else if (/empresa|business/.test(p)) to = '/#empresas'
+  else if (/contacto|contact/.test(p)) to = '/#contacto'
+  else if (/nosotros|about|quienes/.test(p)) to = '/#nosotros'
+  return <Navigate to={to} replace />
+}
+
 function AppInner() {
   const lenisRef = useRef(null)
   const loc = useLocation()
@@ -112,6 +134,7 @@ function AppInner() {
             <Route path="nueva" element={<PropertyForm />} />
             <Route path=":id" element={<PropertyForm />} />
           </Route>
+          <Route path="*" element={<CatchAll />} />
         </Routes>
       </Suspense>
       {!isAdmin && <CamilaBot />}

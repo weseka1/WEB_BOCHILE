@@ -32,17 +32,18 @@ export default function Nav() {
 
   const waMsg = lang === 'en' ? 'Hi Camila, I come from the Bochile website 🙌' : 'Hola Camila, vengo de la web de Bochile 🙌'
 
-  const LINKS = (
-    <>
-      <Link to="/propiedades?op=sale" data-cursor onClick={() => setOpen(false)}>{t.nav.comprar}</Link>
-      <Link to="/propiedades?op=rent" data-cursor onClick={() => setOpen(false)}>{t.nav.alquilar}</Link>
-      <Link to="/#tasacion" data-cursor onClick={() => setOpen(false)}>{t.nav.tasaciones}</Link>
-      <Link to="/#empresas" data-cursor onClick={() => setOpen(false)}>{t.nav.empresas}</Link>
-      <Link to="/#inversion" data-cursor onClick={() => setOpen(false)}>{t.nav.inversion}</Link>
-      <Link to="/#nosotros" data-cursor onClick={() => setOpen(false)}>{t.nav.nosotros}</Link>
-      <Link to="/#contacto" data-cursor onClick={() => setOpen(false)}>{t.nav.contacto}</Link>
-    </>
-  )
+  // Principales (directos) + subcategorías que cuelgan de "Nosotros".
+  const MAIN = [
+    { to: '/propiedades?op=sale', label: t.nav.comprar },
+    { to: '/propiedades?op=rent', label: t.nav.alquilar },
+    { to: '/#inversion', label: t.nav.inversion },
+  ]
+  const SUB = [
+    { to: '/#tasacion', label: t.nav.tasaciones },
+    { to: '/#empresas', label: t.nav.empresas },
+    { to: '/#contacto', label: t.nav.contacto },
+  ]
+  const close = () => setOpen(false)
 
   return (
     <nav className={'nav' + (scrolled ? ' scrolled' : '') + (open ? ' nav-open' : '')}>
@@ -51,7 +52,19 @@ export default function Nav() {
           <svg viewBox="0 0 22 28"><rect x="0" y="9" width="4.5" height="19" /><rect x="8.75" y="0" width="4.5" height="28" /><rect x="17.5" y="5" width="4.5" height="23" /></svg>
           BOCHILE <small>Real Estate</small>
         </Link>
-        <div className="menu">{LINKS}</div>
+        <div className="menu">
+          {MAIN.map((l) => <Link key={l.to} to={l.to} data-cursor onClick={close}>{l.label}</Link>)}
+          <div className="nav-group">
+            <Link to="/#nosotros" className="nav-group-trigger" data-cursor onClick={close}>
+              {t.nav.nosotros}<span className="nav-caret" aria-hidden="true" />
+            </Link>
+            <div className="nav-sub">
+              <div className="nav-sub-inner">
+                {SUB.map((l) => <Link key={l.to} to={l.to} data-cursor onClick={close}>{l.label}</Link>)}
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="nav-right">
           <div className="lang">
             <button className={lang === 'es' ? 'on' : ''} data-cursor onClick={() => setLang('es')}>ES</button>
@@ -69,7 +82,11 @@ export default function Nav() {
 
       {/* Menú mobile (drawer) */}
       <div className={'nav-drawer' + (open ? ' open' : '')} aria-hidden={!open}>
-        <nav className="nav-drawer-links">{LINKS}</nav>
+        <nav className="nav-drawer-links">
+          {MAIN.map((l) => <Link key={l.to} to={l.to} onClick={close}>{l.label}</Link>)}
+          <Link to="/#nosotros" onClick={close}>{t.nav.nosotros}</Link>
+          {SUB.map((l) => <Link key={l.to} className="dl-sub" to={l.to} onClick={close}>{l.label}</Link>)}
+        </nav>
         <div className="nav-drawer-foot">
           <div className="lang">
             <button className={lang === 'es' ? 'on' : ''} onClick={() => setLang('es')}>ES</button>

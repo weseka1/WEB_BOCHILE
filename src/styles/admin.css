@@ -33,6 +33,11 @@
 .adm-app select, .adm-app input[type=checkbox], .adm-app input[type=file]{cursor:pointer}
 .adm-app button:disabled, .adm-app .adm-btn:disabled{cursor:not-allowed}
 
+/* ── inputs numéricos SIN flechitas (spinners): evitan ediciones accidentales ── */
+.adm-app input[type=number], .adm-shell input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.adm-app input[type=number]::-webkit-outer-spin-button, .adm-app input[type=number]::-webkit-inner-spin-button,
+.adm-shell input[type=number]::-webkit-outer-spin-button, .adm-shell input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
 .adm-muted{color:var(--mute)}
 .adm-app code, .adm-shell code{font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;font-size:.85em;color:var(--soft)}
 :where(.adm-app,.adm-shell) ::selection{background:var(--gold-dim);color:#fff}

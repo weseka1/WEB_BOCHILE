@@ -59,6 +59,21 @@ button{font-family:inherit;cursor:none;border:none;background:none;color:inherit
 .menu{display:flex;gap:34px}
 .menu a{font-family:'Inter';font-weight:500;font-size:.82rem;letter-spacing:.01em;color:var(--soft);transition:.3s}
 .menu a:hover{color:var(--ink)}
+/* dropdown "Nosotros" (subcategorías) */
+.nav-group{position:relative;display:inline-flex;align-items:center}
+.nav-group-trigger{display:inline-flex;align-items:center;gap:7px}
+.nav-caret{width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+  transform:rotate(45deg);margin-top:-3px;transition:transform .3s var(--ease);opacity:.7}
+.nav-group:hover .nav-caret,.nav-group:focus-within .nav-caret{transform:rotate(-135deg);margin-top:1px}
+.nav-sub{position:absolute;top:100%;left:50%;padding-top:14px;z-index:60;
+  transform:translateX(-50%) translateY(6px);opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .24s var(--ease),transform .24s var(--ease)}
+.nav-group:hover .nav-sub,.nav-group:focus-within .nav-sub{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.nav-sub-inner{display:flex;flex-direction:column;min-width:190px;padding:9px;
+  background:rgba(12,14,16,.9);backdrop-filter:blur(16px);border:1px solid var(--line-2);border-radius:14px;
+  box-shadow:0 24px 50px -20px rgba(0,0,0,.7)}
+.nav-sub-inner a{padding:9px 13px;border-radius:9px;font-size:.82rem;color:var(--soft);white-space:nowrap;transition:.2s}
+.nav-sub-inner a:hover{color:var(--ink);background:rgba(255,255,255,.05)}
 .pill{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--bg);
   padding:11px 20px;border-radius:100px;font-family:'Inter';font-weight:600;font-size:.78rem;letter-spacing:.01em;
   transition:transform .35s var(--ease),background .35s}
@@ -734,6 +749,9 @@ button{font-family:inherit;cursor:none;border:none;background:none;color:inherit
   .nav-drawer-links a{font-family:'Archivo';font-weight:600;font-size:clamp(1.5rem,6vw,2rem);
     letter-spacing:-.01em;color:var(--ink);padding:18px 0;border-bottom:1px solid var(--line)}
   .nav-drawer-links a:active{color:var(--gold)}
+  .nav-drawer-links a.dl-sub{font-size:clamp(1rem,4.4vw,1.25rem);font-weight:500;color:var(--soft);
+    padding:13px 0 13px 22px;position:relative}
+  .nav-drawer-links a.dl-sub::before{content:"";position:absolute;left:4px;top:50%;width:9px;height:1px;background:var(--line-3,var(--line-2))}
   .nav-drawer-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:30px}
   .nav-drawer-foot .lang{display:flex}
   .nav-scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:54;

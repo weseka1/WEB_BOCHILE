@@ -50,6 +50,8 @@ export default function PropertyForm() {
   }, [id, editing])
 
   const set = (k) => (e) => setF((s) => ({ ...s, [k]: e?.target ? (e.target.type === 'checkbox' ? e.target.checked : e.target.value) : e }))
+  // Evita que la rueda del mouse cambie el valor de los campos numéricos al scrollear (bug del input type=number).
+  const noWheel = (e) => e.currentTarget.blur()
 
   // ── subida a Supabase Storage ──────────────────────────────────────────────
   const upload = async (file, kind) => {
@@ -173,7 +175,7 @@ export default function PropertyForm() {
           </div>
           <div className="adm-row">
             <label>Precio
-              <input type="number" value={f.price} onChange={set('price')} placeholder="Vacío = Consultar" />
+              <input type="number" inputMode="decimal" value={f.price} onChange={set('price')} onWheel={noWheel} placeholder="Vacío = Consultar" />
             </label>
             <label>Moneda
               <select value={f.currency} onChange={set('currency')}><option value="USD">USD</option><option value="ARS">ARS</option></select>
@@ -197,12 +199,12 @@ export default function PropertyForm() {
             <label>Dirección<input value={f.address} onChange={set('address')} /></label>
           </div>
           <div className="adm-row">
-            <label>Sup. cubierta (m²)<input type="number" value={f.area} onChange={set('area')} /></label>
-            <label>Sup. total (m²)<input type="number" value={f.area_total} onChange={set('area_total')} /></label>
+            <label>Sup. cubierta (m²)<input type="number" inputMode="decimal" value={f.area} onChange={set('area')} onWheel={noWheel} /></label>
+            <label>Sup. total (m²)<input type="number" inputMode="decimal" value={f.area_total} onChange={set('area_total')} onWheel={noWheel} /></label>
           </div>
           <div className="adm-row">
-            <label>Dormitorios / amb.<input type="number" value={f.beds} onChange={set('beds')} /></label>
-            <label>Baños<input type="number" value={f.baths} onChange={set('baths')} /></label>
+            <label>Dormitorios / amb.<input type="number" inputMode="numeric" value={f.beds} onChange={set('beds')} onWheel={noWheel} /></label>
+            <label>Baños<input type="number" inputMode="numeric" value={f.baths} onChange={set('baths')} onWheel={noWheel} /></label>
           </div>
           <label>Slug (URL)<input value={f.slug} onChange={set('slug')} placeholder={slugify(f.title || f.address)} /></label>
         </section>
