@@ -55,6 +55,10 @@ export default function Nosotros() {
         </div>
       </div>
 
+      {/* Equipo OCULTO temporalmente hasta tener las fotos reales del equipo.
+          PARA REACTIVAR: cargar las fotos en public/assets/team/ + completar OWNERS (arriba)
+          y descomentar este bloque. */}
+      {/*
       <div className="nos-team-head reveal">
         <h3>{n.teamHead}</h3>
         <span>{n.teamNote}</span>
@@ -62,6 +66,7 @@ export default function Nosotros() {
       <div className="nos-team">
         {OWNERS.map((o, i) => <Member o={o} key={i} />)}
       </div>
+      */}
 
       <div className="nos-why">
         {n.why.map((w, i) => (
