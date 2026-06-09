@@ -60,7 +60,7 @@ export const DICT = {
     },
     inversion: {
       kicker: 'Inversión & Energía',
-      title1: 'Bahía Blanca,', title2: 'la puerta de Vaca Muerta.',
+      title1: 'Vaca', title2: 'Muerta.',
       sub: 'Polo petroquímico, puerto de aguas profundas y parques industriales: Bahía Blanca está en el centro de la inversión energética que conecta la región con el mundo. Acompañamos a las empresas e inversores que buscan su lugar en ese mapa.',
       cta: 'Hablar con nuestro equipo de inversión',
       waMsg: 'Hola, quiero consultar por inversión inmobiliaria en Bahía Blanca (Vaca Muerta / energía / parques industriales).',
@@ -136,7 +136,7 @@ export const DICT = {
     },
     inversion: {
       kicker: 'Investment & Energy',
-      title1: 'Bahía Blanca,', title2: 'the gateway to Vaca Muerta.',
+      title1: 'Vaca', title2: 'Muerta.',
       sub: 'Petrochemical hub, deep-water port and industrial parks: Bahía Blanca sits at the center of the energy investment connecting the region with the world. We guide the companies and investors looking for their place on that map.',
       cta: 'Talk to our investment team',
       waMsg: 'Hi, I’d like to ask about real estate investment in Bahía Blanca (Vaca Muerta / energy / industrial parks).',
