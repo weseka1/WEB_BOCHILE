@@ -25,6 +25,7 @@ export default function Propiedades() {
   const currency = op === 'rent' ? 'ars' : 'usd'
   const [type, setType] = useState(sp.get('type') || '')   // permite deep-link desde "Empresas" (?type=Galpón)
   const [zone, setZone] = useState('')
+  const [beds, setBeds] = useState(sp.get('beds') || '')   // dormitorios mínimos (1+, 2+, 3+, 4+); permite deep-link ?beds=2
   const [lo, setLo] = useState(0)
   const [hi, setHi] = useState(priceMax)
   const [pozo, setPozo] = useState(false)
@@ -40,15 +41,22 @@ export default function Propiedades() {
     return CATALOG.filter((p) => p.op === op)
       .filter((p) => (type ? p.type === type : true))
       .filter((p) => (zone ? p.zone === zone : true))
+      .filter((p) => {
+        if (!beds) return true
+        if (beds === 'mono') return p.beds === 0 || /monoambiente/i.test(p.title || '')   // monoambiente: 0 dorm o lo dice el título
+        if (beds === '4') return p.beds != null && p.beds >= 4                              // "4 o más"
+        return p.beds === Number(beds)                                                      // exacto (1, 2, 3)
+      })
       .filter((p) => (pozo ? p.pozo : true))
       .filter((p) => (credito ? p.aptoCredito : true))
       // Precio por rango del slider: respeta piso Y techo. Las "Consulte precio" (sin price) quedan fuera al filtrar por precio.
       .filter((p) => (!hasPrice ? true : (p.price != null && p.price >= lo && (hi >= priceMax || p.price <= hi))))
       .filter((p) => (q ? norm(`${p.title} ${p.location} ${p.zone} ${p.type}`).includes(norm(q)) : true))
-  }, [CATALOG, op, type, zone, pozo, credito, lo, hi, q, priceMax])
+  }, [CATALOG, op, type, zone, beds, pozo, credito, lo, hi, q, priceMax])
 
   const typeOpts = [{ value: '', label: t.cat.alltypes }, ...TYPES.map((x) => ({ value: x, label: x }))]
   const zoneOpts = [{ value: '', label: t.cat.allzones }, ...ZONES.map((x) => ({ value: x, label: x }))]
+  const bedsOpts = [{ value: '', label: t.cat.beds }, ...t.cat.bedsOpts.map((o) => ({ value: o.v, label: o.l }))]
 
   return (
     <div className="catalog">
@@ -65,6 +73,7 @@ export default function Propiedades() {
         </div>
         <Dropdown value={type} onChange={(v) => { setType(v); setShown(PAGE) }} options={typeOpts} placeholder={t.cat.alltypes} />
         <Dropdown value={zone} onChange={(v) => { setZone(v); setShown(PAGE) }} options={zoneOpts} placeholder={t.cat.allzones} />
+        <Dropdown value={beds} onChange={(v) => { setBeds(v); setShown(PAGE) }} options={bedsOpts} placeholder={t.cat.beds} />
         <button type="button" className={'ftoggle' + (pozo ? ' on' : '')} data-cursor aria-pressed={pozo}
           onClick={() => { setPozo((v) => !v); setShown(PAGE) }}>
           <span className="ftoggle-dot" aria-hidden="true" />{t.cat.pozo}
