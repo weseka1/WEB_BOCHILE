@@ -143,12 +143,20 @@
       "description": "Departamento en planta baja. Un dormitorio, living comedor, cocina semi separada, habitación pequeña ideal escritorio, baño y patio seco. No se aceptan mascotas.\n\nExpensas aprox. $55.000 · Contrato 2 años · Ajustes trimestrales IPC del CREEBBA."
     },
     {
-      "slug": "belgrano-332",
-      "title": "Belgrano 332 · 3º B",
-      "address": "Belgrano 332 3º B",
-      "beds": 2, "baths": 1, "price": 750000,
-      "features": ["Expensas ~$83.000", "Cocina con comedor diario", "Cláusula de venta", "No acepta mascotas"],
-      "description": "Departamento de dos dormitorios, cocina separada con comedor diario, amplio living comedor y baño completo. No se aceptan mascotas. Cláusula de venta.\n\nExpensas aprox. $83.000 · Contrato 2 años · Ajustes trimestrales IPC del CREEBBA."
+      "slug": "belgrano-354",
+      "title": "Belgrano 354 · 1º D",
+      "address": "Belgrano 354 1º D",
+      "beds": null, "baths": null, "price": null,
+      "features": [],
+      "description": "Departamento en alquiler sobre Belgrano al 300, Bahía Blanca. Consultá disponibilidad, valor y detalle por WhatsApp."
+    },
+    {
+      "slug": "urquiza-448",
+      "title": "Urquiza 448 · 3º A",
+      "address": "Urquiza 448 3º A",
+      "beds": null, "baths": null, "price": null,
+      "features": [],
+      "description": "Departamento en alquiler en Urquiza 448, Bahía Blanca. Consultá disponibilidad, valor y detalle por WhatsApp."
     }
   ]
 }

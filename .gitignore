@@ -44,3 +44,5 @@ public/assets/props/*
 # temporales de carga de datos
 _*.py
 _*.txt
+# fotos locales para import-rentals (ya viven en Supabase Storage, no van al repo)
+rental-photos/

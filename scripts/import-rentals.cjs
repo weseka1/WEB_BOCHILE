@@ -125,7 +125,8 @@ function toRow(r, images) {
     }
     const state = row.published ? '✅ PUBLICADA' : '📝 BORRADOR'
     const fotos = folder ? `${images.length} fotos (${folder.name})` : 'sin carpeta de fotos'
-    console.log(`  ${state}  ${r.title.padEnd(34)} $${r.price.toLocaleString('es-AR')} · ${fotos}`)
+    const precio = r.price ? '$' + r.price.toLocaleString('es-AR') : 'Consultar'
+    console.log(`  ${state}  ${r.title.padEnd(34)} ${precio} · ${fotos}`)
     summary.push({ slug: r.slug, published: row.published, fotos: images.length, folder: folder ? folder.name : null })
   }
 
