@@ -82,6 +82,7 @@ export function fromRow(r) {
     featuredRank: r.featured_rank != null ? Number(r.featured_rank) : null,
     exclusive: !!r.exclusive,
     published: r.published !== false,
+    status: r.status || (r.published !== false ? 'published' : 'draft'),   // published|paused|finished|draft|trash
     url: r.url || '',
   }
 }

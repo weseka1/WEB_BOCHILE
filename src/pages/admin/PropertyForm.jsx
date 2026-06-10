@@ -17,7 +17,7 @@ const EMPTY = {
   price: '', currency: 'USD', city: 'Bahía Blanca', barrio: '', zone: '', address: '',
   area: '', area_total: '', beds: '', baths: '', features: '',
   images: [], videos: [], pozo: false, apto_credito: false, featured: false, featured_rank: '', exclusive: false,
-  published: true, url: '',
+  published: true, status: 'published', url: '',
 }
 
 export default function PropertyForm() {
@@ -31,6 +31,8 @@ export default function PropertyForm() {
   const [err, setErr] = useState('')
   const [up, setUp] = useState('')   // texto de "subiendo…"
   const imgInput = useRef(null)
+  const dragImg = useRef(null)        // índice de la foto que se está arrastrando
+  const [dragOver, setDragOver] = useState(-1)
 
   useEffect(() => {
     if (!editing) return
@@ -73,6 +75,12 @@ export default function PropertyForm() {
   }
   const removeImage = (i) => setF((s) => ({ ...s, images: s.images.filter((_, k) => k !== i) }))
   const makeMain = (i) => setF((s) => { const im = [...s.images]; const [x] = im.splice(i, 1); return { ...s, images: [x, ...im] } })
+  // Reordenar la galería: el orden del array ES el orden en la web; images[0] = portada.
+  const moveImage = (from, to) => setF((s) => {
+    if (to < 0 || to >= s.images.length || from === to) return s
+    const im = [...s.images]; const [x] = im.splice(from, 1); im.splice(to, 0, x)
+    return { ...s, images: im }
+  })
 
   const addVideo = async (file) => {
     setErr(''); setUp('Subiendo video…')
@@ -127,7 +135,8 @@ export default function PropertyForm() {
       featured: !!f.featured,
       featured_rank: f.featured ? (intOrNull(f.featured_rank) ?? 50) : null,
       exclusive: !!f.exclusive,
-      published: !!f.published,
+      status: f.status || 'published',
+      published: (f.status || 'published') === 'published',   // el trigger igual lo sincroniza
       url: f.url || null,
     }
     if (!editing) payload.created_by = session?.user?.id || null
@@ -211,7 +220,7 @@ export default function PropertyForm() {
 
         {/* ── Fotos ── */}
         <section className="adm-card adm-col-2">
-          <h3>Fotos <small className="adm-muted">· la primera es la principal</small></h3>
+          <h3>Fotos <small className="adm-muted">· arrastrá para ordenar · la 1ª es la portada</small></h3>
           <div className="adm-drop" onClick={() => imgInput.current?.click()}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => { e.preventDefault(); addImages([...e.dataTransfer.files].filter((x) => x.type.startsWith('image/'))) }}>
@@ -222,11 +231,19 @@ export default function PropertyForm() {
           {f.images.length > 0 && (
             <div className="adm-thumbs">
               {f.images.map((src, i) => (
-                <div className={'adm-thumb-item' + (i === 0 ? ' is-main' : '')} key={src + i}>
-                  <img src={src} alt="" referrerPolicy="no-referrer" />
-                  {i === 0 && <span className="adm-main-tag">Principal</span>}
+                <div className={'adm-thumb-item' + (i === 0 ? ' is-main' : '') + (dragOver === i ? ' is-dragover' : '')} key={src + i}
+                  draggable
+                  onDragStart={() => { dragImg.current = i }}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(i) }}
+                  onDragLeave={() => setDragOver((d) => (d === i ? -1 : d))}
+                  onDrop={(e) => { e.preventDefault(); if (dragImg.current != null) moveImage(dragImg.current, i); dragImg.current = null; setDragOver(-1) }}
+                  onDragEnd={() => { dragImg.current = null; setDragOver(-1) }}>
+                  <img src={src} alt="" referrerPolicy="no-referrer" draggable={false} />
+                  {i === 0 && <span className="adm-main-tag">Portada</span>}
                   <div className="adm-thumb-acts">
-                    {i !== 0 && <button type="button" onClick={() => makeMain(i)} title="Hacer principal">★</button>}
+                    {i !== 0 && <button type="button" onClick={() => moveImage(i, i - 1)} title="Mover antes">◀</button>}
+                    {i !== f.images.length - 1 && <button type="button" onClick={() => moveImage(i, i + 1)} title="Mover después">▶</button>}
+                    {i !== 0 && <button type="button" onClick={() => makeMain(i)} title="Hacer portada">★</button>}
                     <button type="button" onClick={() => removeImage(i)} title="Quitar">×</button>
                   </div>
                 </div>
@@ -261,8 +278,15 @@ export default function PropertyForm() {
         {/* ── Publicación ── */}
         <section className="adm-card adm-col-2">
           <h3>Publicación</h3>
+          <label className="adm-field-status">Estado de publicación
+            <select value={f.status} onChange={set('status')}>
+              <option value="published">🟢 Publicada — visible en la web</option>
+              <option value="paused">🟡 Pausada — fuera de la web (temporal)</option>
+              <option value="finished">⚪ Finalizada — alquilada/vendida (archivo)</option>
+              <option value="draft">🔵 Borrador — en preparación</option>
+            </select>
+          </label>
           <div className="adm-checks">
-            <label className="adm-check"><input type="checkbox" checked={f.published} onChange={set('published')} /> Publicada <span className="adm-hint">visible en la web</span></label>
             <label className="adm-check"><input type="checkbox" checked={f.featured} onChange={set('featured')} /> Destacada <span className="adm-hint">aparece en la home</span></label>
             <label className="adm-check"><input type="checkbox" checked={f.pozo} onChange={set('pozo')} /> En pozo <span className="adm-hint">preventa / construcción</span></label>
             <label className="adm-check"><input type="checkbox" checked={f.apto_credito} onChange={set('apto_credito')} /> Apto crédito <span className="adm-hint">califica para crédito hipotecario</span></label>

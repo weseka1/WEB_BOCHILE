@@ -97,7 +97,7 @@ function toRow(r, images) {
     area: null, area_total: null, beds: r.beds ?? null, baths: r.baths ?? null,
     features: r.features || [], images, main_image: images[0] || null, videos: [],
     pozo: false, apto_credito: false, featured: false, featured_rank: null, exclusive: false,
-    published, url: null,
+    status: published ? 'published' : 'draft', published, url: null,
   }
 }
 
