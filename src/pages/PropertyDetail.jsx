@@ -62,12 +62,18 @@ export default function PropertyDetail() {
           {hasVideo && <span className="detail-tag detail-tag-video"><i className="dt-dot" /> Video</span>}
           <span className="detail-tag">{p.op === 'sale' ? t.cat.sale : t.cat.rent}</span>
           <span className="detail-tag">{p.type}</span>
-          <span className="detail-tag">{imgs.length} {t.detail.photos}</span>
+          {imgs.length > 0 && <span className="detail-tag">{imgs.length} {t.detail.photos}</span>}
         </div>
       </div>
 
       <div className="detail-hero">
         <div className="gallery">
+          {imgs.length === 0 ? (
+            <div className="gal-main gal-noimg" aria-hidden="true">
+              <svg viewBox="0 0 22 28"><rect x="0" y="9" width="4.5" height="19" /><rect x="8.75" y="0" width="4.5" height="28" /><rect x="17.5" y="5" width="4.5" height="23" /></svg>
+              <span>{t.cat.noPhoto}</span>
+            </div>
+          ) : (<>
           <div className="gal-main" onClick={() => setLb(i)}>
             <img src={imgs[i]} alt={p.title} referrerPolicy="no-referrer" />
             {/* Recorrido en video integrado en la galería (abre el lightbox de video) */}
@@ -88,6 +94,7 @@ export default function PropertyDetail() {
               <img key={k} src={src} alt="" referrerPolicy="no-referrer" className={k === i ? 'on' : ''} data-cursor onClick={() => setI(k)} />
             ))}
           </div>
+          </>)}
         </div>
 
         <aside className="detail-info">

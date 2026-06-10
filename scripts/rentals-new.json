@@ -1,0 +1,154 @@
+{
+  "_meta": {
+    "descripcion": "Alquileres NUEVOS a cargar (lista de Cami / Listado_Propiedades.docx). Los consume scripts/import-rentals.cjs.",
+    "fuente_datos": "Listado_Propiedades.docx (Drive, marketing.bochile) — descripciones + precios + dormitorios.",
+    "moneda": "ARS",
+    "ciudad": "Bahía Blanca",
+    "fotos": "Cada ficha busca su carpeta en ./rental-photos/<carpeta>. Si no hay fotos, queda como BORRADOR (published=false) hasta que lleguen.",
+    "excluidas_sin_datos": ["Urquiza 448", "Rodríguez 117", "España 63"],
+    "ya_existente_no_duplicar": ["Roca 734"],
+    "numeros_ajustados_segun_doc": {
+      "saez peña 230 (lista) -> Sáenz Peña 2358 (doc)": "única con datos",
+      "fuerte argentino 456 (lista) -> Fuerte Argentino 465 (doc)": "typo probable",
+      "belgrano 354 (lista) -> Belgrano 332 (doc)": "única con datos"
+    }
+  },
+  "rentals": [
+    {
+      "slug": "remedios-de-escalada-1636",
+      "title": "Remedios de Escalada 1636 · PB",
+      "address": "Remedios de Escalada 1636 PB",
+      "beds": 1, "baths": 1, "price": 500000,
+      "features": ["Expensas ~$30.000", "Patio común con parrilla", "No acepta mascotas"],
+      "description": "Departamento interno en planta baja. Cocina integrada al living comedor, un dormitorio, baño completo y lavadero separado. Patio común con parrilla. No se permiten mascotas.\n\nExpensas aprox. $30.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "mitre-456",
+      "title": "Mitre 456 · 2º",
+      "address": "Mitre 456 2º 6",
+      "beds": 1, "baths": 1, "price": 500000,
+      "features": ["Expensas ~$50.000", "Cocina integrada", "No acepta mascotas"],
+      "description": "Departamento en segundo piso por escalera. Un dormitorio, living comedor con cocina integrada y baño completo. No se permiten mascotas.\n\nExpensas aprox. $50.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "gorriti-6",
+      "title": "Gorriti 6 · 9º",
+      "address": "Gorriti 6 9º Depto 6",
+      "beds": 1, "baths": 1, "price": 500000,
+      "features": ["Expensas ~$76.000", "Cocina separada", "Lavadero", "No acepta mascotas"],
+      "description": "Departamento de un dormitorio, cocina separada, lavadero, living comedor y baño completo. No se permiten mascotas.\n\nExpensas aprox. $76.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "cramer-830",
+      "title": "Cramer 830",
+      "address": "Cramer 830",
+      "beds": 1, "baths": 1, "price": 530000,
+      "features": ["Semi amoblado", "Patio verde", "Servicios compartidos 50%", "No acepta mascotas"],
+      "description": "Departamento semi amoblado de un dormitorio, cocina comedor, baño y patio verde. Servicios compartidos (50%). No se aceptan mascotas.\n\nContrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "vieytes-757",
+      "title": "Vieytes 757 · Planta alta",
+      "address": "Vieytes 757 PA",
+      "beds": 1, "baths": 1, "price": 580000,
+      "features": ["Sin expensas", "Terraza privada", "Lavadero", "Acepta mascotas"],
+      "description": "Departamento en planta alta. Un dormitorio, cocina comedor y terraza privada con espacio de lavadero. Se permiten mascotas.\n\nSin expensas (solo gastos compartidos) · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "estomba-1241",
+      "title": "Estomba 1241 · PA",
+      "address": "Estomba 1241 PA Depto 53",
+      "beds": 2, "baths": 1, "price": 630000,
+      "features": ["Expensas ~$80.000", "Balcón", "Acepta mascotas"],
+      "description": "Departamento en planta alta. Dos dormitorios, cocina integrada al living comedor, baño completo y balcón. Acepta mascotas.\n\nExpensas aprox. $80.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "saavedra-118",
+      "title": "Saavedra 118 · 1º E",
+      "address": "Saavedra 118 1º E",
+      "beds": 1, "baths": 1, "price": 650000,
+      "features": ["Expensas ~$96.000", "Terraza privada", "Lavadero", "Ascensor", "Acepta mascotas"],
+      "description": "Departamento en primer piso con ascensor. Un dormitorio, cocina comedor, baño completo y terraza privada con lavadero incorporado. Acepta mascotas.\n\nExpensas aprox. $96.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "bonpland-140",
+      "title": "Bonpland 140 · 3º",
+      "address": "Bonpland 140 3º Depto 15",
+      "beds": 1, "baths": 1, "price": 670000,
+      "features": ["Expensas ~$55.000", "Semi amoblado", "No acepta mascotas"],
+      "description": "Departamento en tercer piso por escalera. Un dormitorio, cocina comedor y baño. Semi amoblado. No se aceptan mascotas.\n\nExpensas aprox. $55.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "estomba-1257",
+      "title": "Estomba 1257 · PB",
+      "address": "Estomba 1257 PB Depto 38",
+      "beds": 2, "baths": 1, "price": 680000,
+      "features": ["Expensas ~$50.000", "Patio", "Lavadero independiente", "No acepta mascotas"],
+      "description": "Departamento interno en planta baja. Dos dormitorios, living cómodo, cocina separada, lavadero independiente, baño completo y patio. No se permiten mascotas.\n\nExpensas aprox. $50.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "san-juan-113",
+      "title": "San Juan 113 · 2º",
+      "address": "San Juan 113 2º",
+      "beds": 2, "baths": 1, "price": 750000,
+      "features": ["Expensas ~$50.000", "Balcón amplio", "No acepta mascotas"],
+      "description": "Departamento en segundo piso por escalera. Dos dormitorios, baño completo, living comedor y amplio balcón que conecta el comedor con la habitación. No se permiten mascotas.\n\nExpensas aprox. $50.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "san-juan-451-pb",
+      "title": "San Juan 451 · PB",
+      "address": "San Juan 451 PB Depto E",
+      "beds": 2, "baths": 1, "price": 750000,
+      "features": ["Sin expensas (gastos compartidos)", "A/A frío-calor", "Anafe y horno eléctrico", "No acepta mascotas"],
+      "description": "Departamento interno en planta baja (eléctrico). Dos dormitorios, cocina separada, living comedor y baño completo. Equipado con aire acondicionado frío/calor, anafe y horno eléctrico y termotanque eléctrico. No se aceptan mascotas.\n\nSin expensas (solo gastos compartidos ABSA y EDES) · Contrato 1 año · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "yrigoyen-511",
+      "title": "Yrigoyen 511 · 8º B",
+      "address": "Yrigoyen 511 8º B",
+      "beds": 2, "baths": 1, "price": 790000,
+      "features": ["Expensas ~$180.000", "Lavadero"],
+      "description": "Departamento de dos dormitorios, living comedor, cocina, lavadero y baño.\n\nExpensas aprox. $180.000 · Contrato 2 años · Ajustes trimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "lamadrid-168",
+      "title": "Lamadrid 168 · 1º A",
+      "address": "Lamadrid 168 1º A",
+      "beds": 2, "baths": 2, "price": 800000,
+      "features": ["Expensas ~$220.000", "Dormitorios con placares", "Aire acondicionado", "Calefacción por radiadores", "Patio", "Acepta mascotas"],
+      "description": "Departamento de dos dormitorios con placares y aire acondicionado, amplio living comedor, cocina separada, lavadero, antebaño y baño con bañera, más baño de servicio y patio. Calefacción por radiadores. Acepta mascotas.\n\nExpensas aprox. $220.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "rondeau-78",
+      "title": "Rondeau 78 · 2º A",
+      "address": "Rondeau 78 2º A",
+      "beds": 3, "baths": 2, "price": 850000,
+      "features": ["Expensas ~$125.000", "Balcón al frente", "Baño de servicio", "No acepta mascotas"],
+      "description": "Departamento de tres dormitorios, cocina separada, amplio living comedor, lavadero, baño completo, baño de servicio y amplio balcón al frente. No se aceptan mascotas.\n\nExpensas aprox. $125.000 · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "saenz-pena-2358",
+      "title": "Sáenz Peña 2358",
+      "address": "Sáenz Peña 2358 Depto 2",
+      "beds": 2, "baths": 1, "price": 550000,
+      "features": ["Gastos comunes ~$25.000", "Patio seco con lavadero", "No acepta mascotas"],
+      "description": "Departamento de dos dormitorios, cocina comedor, baño y patio seco con lavadero. No se aceptan mascotas.\n\nGastos comunes aprox. $25.000 (ABSA e impuesto municipal) · Contrato 2 años · Ajustes cuatrimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "fuerte-argentino-465",
+      "title": "Fuerte Argentino 465 · PB",
+      "address": "Fuerte Argentino 465 PB",
+      "beds": 1, "baths": 1, "price": 650000,
+      "features": ["Expensas ~$55.000", "Escritorio", "Patio seco", "No acepta mascotas"],
+      "description": "Departamento en planta baja. Un dormitorio, living comedor, cocina semi separada, habitación pequeña ideal escritorio, baño y patio seco. No se aceptan mascotas.\n\nExpensas aprox. $55.000 · Contrato 2 años · Ajustes trimestrales IPC del CREEBBA."
+    },
+    {
+      "slug": "belgrano-332",
+      "title": "Belgrano 332 · 3º B",
+      "address": "Belgrano 332 3º B",
+      "beds": 2, "baths": 1, "price": 750000,
+      "features": ["Expensas ~$83.000", "Cocina con comedor diario", "Cláusula de venta", "No acepta mascotas"],
+      "description": "Departamento de dos dormitorios, cocina separada con comedor diario, amplio living comedor y baño completo. No se aceptan mascotas. Cláusula de venta.\n\nExpensas aprox. $83.000 · Contrato 2 años · Ajustes trimestrales IPC del CREEBBA."
+    }
+  ]
+}

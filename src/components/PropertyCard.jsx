@@ -27,8 +27,15 @@ export default function PropertyCard({ p }) {
       <span className="pcard-sheen" aria-hidden="true" />
       <span className="pcard-corner tl" aria-hidden="true" /><span className="pcard-corner tr" aria-hidden="true" />
       <span className="pcard-corner bl" aria-hidden="true" /><span className="pcard-corner br" aria-hidden="true" />
-      <div className="pcard-img">
-        <img src={p.img} alt={p.title} loading="lazy" referrerPolicy="no-referrer" />
+      <div className={'pcard-img' + (p.img ? '' : ' is-noimg')}>
+        {p.img ? (
+          <img src={p.img} alt={p.title} loading="lazy" referrerPolicy="no-referrer" />
+        ) : (
+          <div className="pcard-noimg" aria-hidden="true">
+            <svg viewBox="0 0 22 28"><rect x="0" y="9" width="4.5" height="19" /><rect x="8.75" y="0" width="4.5" height="28" /><rect x="17.5" y="5" width="4.5" height="23" /></svg>
+            <span>{t.cat.noPhoto}</span>
+          </div>
+        )}
         <div className="pcard-tags">
           <span className="pcard-op">{p.op === 'sale' ? t.cat.sale : t.cat.rent}</span>
           {p.pozo && <span className="pcard-pozo">{t.cat.pozo}</span>}

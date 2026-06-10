@@ -10,7 +10,7 @@ export const WA = {
   tasaciones: '5492915770521',   // misma línea que ventas (tasar = captar para vender)
   galpones:   '5492914022077',   // Maxi — galpones / naves / pedidos especiales (+54 9 291 402-2077)
   vacamuerta: '5492915770003',   // Karina — Vaca Muerta / inversiones Neuquén (+54 9 291 577-0003)
-  general:    '542914537816',    // 291 453-7816
+  general:    '5492915770521',   // botón principal de la web → línea de Ventas. (El histórico 542914537816 / 291 453-7816 es FIJO y NO tiene WhatsApp.)
 }
 export const waTo = (area, text) => `https://wa.me/${WA[area] || WA.general}?text=${encodeURIComponent(text || '')}`
 export const wa = (text) => waTo('general', text)
