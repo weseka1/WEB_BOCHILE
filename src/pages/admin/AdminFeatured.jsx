@@ -85,7 +85,7 @@ export default function AdminFeatured() {
       <div className="adm-explainer">
         <span>⭐</span>
         <div>
-          La <b>#1</b> es la <b>estrella</b> (la card grande de arriba). El resto aparecen como tarjetas abajo, en este orden.
+          La <b>#1</b> es la <b>estrella</b> (la card grande de arriba) y es la <b>única que reproduce su 🎬 video</b> si tiene uno cargado. El resto aparecen como tarjetas con foto, en este orden.
           Se muestran <b>hasta {MAX}</b>. {feats.length < MAX && <>Si marcás menos de {MAX}, los lugares que faltan se completan solos con las más caras.</>}
         </div>
       </div>
