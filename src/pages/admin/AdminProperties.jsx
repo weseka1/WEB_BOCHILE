@@ -21,6 +21,7 @@ export default function AdminProperties() {
   const [err, setErr] = useState('')
   const [q, setQ] = useState('')
   const [view, setView] = useState('all')   // all | published | paused | finished | draft | trash
+  const [op, setOp] = useState('all')        // all | sale | rent | featured
   const [busyId, setBusyId] = useState(null)
 
   const load = async () => {
@@ -36,9 +37,10 @@ export default function AdminProperties() {
   useEffect(() => { load() }, [])
 
   const filtered = useMemo(() => rows
+    .filter((p) => (op === 'all' ? true : op === 'featured' ? p.featured : p.op === op))
     .filter((p) => (view === 'all' ? p.status !== 'trash' : p.status === view))
     .filter((p) => (q ? norm(`${p.title} ${p.address} ${p.zone} ${p.type} ${p.id}`).includes(norm(q)) : true)),
-    [rows, q, view])
+    [rows, q, view, op])
 
   // Cambiar de estado (incluye mandar a papelera con 'trash'). El trigger sincroniza published.
   const setStatus = async (p, status) => {
@@ -74,6 +76,19 @@ export default function AdminProperties() {
     return c
   }, [rows])
 
+  const opCounts = useMemo(() => {
+    const c = { all: 0, sale: 0, rent: 0, featured: 0 }
+    for (const p of rows) { if (stOf(p) === 'trash') continue; c.all += 1; c[p.op] = (c[p.op] || 0) + 1; if (p.featured) c.featured += 1 }
+    return c
+  }, [rows])
+
+  const OP_TABS = [
+    { k: 'all', label: 'Todas' },
+    { k: 'sale', label: 'Venta' },
+    { k: 'rent', label: 'Alquiler' },
+    { k: 'featured', label: '★ Destacadas' },
+  ]
+
   const TABS = [
     { k: 'all', label: 'Todas' },
     { k: 'published', label: 'Publicadas' },
@@ -89,19 +104,34 @@ export default function AdminProperties() {
       <div className="adm-head">
         <div>
           <h2>Propiedades</h2>
-          <p className="adm-muted">{counts.all} activas · {counts.published} publicadas · {counts.paused} pausadas · {counts.draft} borradores · {counts.trash} en papelera</p>
+          <p className="adm-muted">{opCounts.sale} en venta · {opCounts.rent} en alquiler · {opCounts.featured} destacadas · {counts.draft} borradores · {counts.trash} en papelera</p>
         </div>
         <Link to="/admin/nueva" className="adm-btn primary">+ Nueva propiedad</Link>
       </div>
 
       <div className="adm-toolbar">
         <input className="adm-search" placeholder="Buscar por título, dirección, zona, ID…" value={q} onChange={(e) => setQ(e.target.value)} />
-        <div className="adm-seg adm-seg-wrap">
-          {TABS.map((t) => (
-            <button key={t.k} className={view === t.k ? 'on' : ''} onClick={() => setView(t.k)}>
-              {t.label}{counts[t.k] ? <em className="adm-seg-n">{counts[t.k]}</em> : null}
-            </button>
-          ))}
+        <div className="adm-filters">
+          <div className="adm-filtergroup">
+            <span className="adm-filterlabel">Operación</span>
+            <div className="adm-seg">
+              {OP_TABS.map((t) => (
+                <button key={t.k} className={op === t.k ? 'on' : ''} onClick={() => setOp(t.k)}>
+                  {t.label}{opCounts[t.k] ? <em className="adm-seg-n">{opCounts[t.k]}</em> : null}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="adm-filtergroup">
+            <span className="adm-filterlabel">Estado</span>
+            <div className="adm-seg adm-seg-wrap">
+              {TABS.map((t) => (
+                <button key={t.k} className={view === t.k ? 'on' : ''} onClick={() => setView(t.k)}>
+                  {t.label}{counts[t.k] ? <em className="adm-seg-n">{counts[t.k]}</em> : null}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
