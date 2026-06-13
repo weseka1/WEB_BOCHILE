@@ -111,13 +111,22 @@ function inject(html, m) {
     return
   }
   const tpl = fs.readFileSync(tplPath, 'utf8')
+  const propDir = path.join(distDir, 'propiedad')
+  fs.mkdirSync(propDir, { recursive: true })
   let ok = 0, skip = 0
   for (const p of rows) {
     const slug = (p.slug || '').trim()
     if (!slug || slug.includes('/')) { skip++; continue }   // sin slug o slug raro → omitir
-    const dir = path.join(distDir, 'propiedad', slug)
+    const html = inject(tpl, metaFor(p))
+    // Dos formas para que Render lo sirva SIEMPRE (el rewrite SPA solo intercepta la
+    // URL sin barra final si no hay un archivo que matchee):
+    //   <slug>.html         → /propiedad/<slug>      (URL sin barra, como se comparte)
+    //   <slug>/index.html   → /propiedad/<slug>/     (URL con barra)
+    // Las propiedades nuevas (aún sin pre-render) caen igual en la SPA → no se rompen.
+    fs.writeFileSync(path.join(propDir, slug + '.html'), html)
+    const dir = path.join(propDir, slug)
     fs.mkdirSync(dir, { recursive: true })
-    fs.writeFileSync(path.join(dir, 'index.html'), inject(tpl, metaFor(p)))
+    fs.writeFileSync(path.join(dir, 'index.html'), html)
     ok++
   }
   console.log(`prerender-og → ${ok} HTML por propiedad · imagen: ${USE_LOGO ? 'LOGO de marca (' + LOGO_NAME + ')' : 'foto de cada propiedad'}${skip ? ` · ${skip} omitidas` : ''}`)
