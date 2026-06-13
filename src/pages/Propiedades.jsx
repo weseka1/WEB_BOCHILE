@@ -10,13 +10,14 @@ import PriceRange from '../components/PriceRange'
 // Región: agrupador de ciudades. NO es un campo de los datos; lo derivamos acá
 // desde la ciudad. El orden manda cómo aparecen en el desplegable; lo no mapeado
 // cae en "Otras". Sumar acá nuevas localidades a medida que entren al catálogo.
-const REGIONS_ORDER = ['Bahía Blanca y zona', 'Costa atlántica', 'Sierras', 'Vaca Muerta / Neuquén', 'Otras']
+const REGIONS_ORDER = ['Bahía Blanca y zona', 'Costa atlántica', 'Sierras', 'Vaca Muerta / Neuquén', 'La Plata', 'Otras']
 const regionOf = (cityRaw) => {
   const c = (cityRaw || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
   if (!c) return 'Otras'
   if (/anelo|neuquen|vaca muerta/.test(c)) return 'Vaca Muerta / Neuquén'
   if (/monte hermoso|pehuen|claromeco|oriente|sauce grande/.test(c)) return 'Costa atlántica'
   if (/sierra|ventana|tornquist|saldungaray/.test(c)) return 'Sierras'
+  if (/la plata/.test(c)) return 'La Plata'
   if (/bahia blanca|cerri|white|cabildo|sauce/.test(c)) return 'Bahía Blanca y zona'
   return 'Otras'
 }
