@@ -7,6 +7,20 @@ import PropertyCard from '../components/PropertyCard'
 import Dropdown from '../components/Dropdown'
 import PriceRange from '../components/PriceRange'
 
+// Región: agrupador de ciudades. NO es un campo de los datos; lo derivamos acá
+// desde la ciudad. El orden manda cómo aparecen en el desplegable; lo no mapeado
+// cae en "Otras". Sumar acá nuevas localidades a medida que entren al catálogo.
+const REGIONS_ORDER = ['Bahía Blanca y zona', 'Costa atlántica', 'Sierras', 'Vaca Muerta / Neuquén', 'Otras']
+const regionOf = (cityRaw) => {
+  const c = (cityRaw || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+  if (!c) return 'Otras'
+  if (/anelo|neuquen|vaca muerta/.test(c)) return 'Vaca Muerta / Neuquén'
+  if (/monte hermoso|pehuen|claromeco|oriente|sauce grande/.test(c)) return 'Costa atlántica'
+  if (/sierra|ventana|tornquist|saldungaray/.test(c)) return 'Sierras'
+  if (/bahia blanca|cerri|white|cabildo|sauce/.test(c)) return 'Bahía Blanca y zona'
+  return 'Otras'
+}
+
 const PAGE = 9
 const SALE_MAX = 1000000     // venta: tope del slider en USD
 const RENT_MAX = 1500000     // alquiler: tope del slider en ARS ($1.500.000). Los alquileres reales hoy van $480k–$750k; deja headroom para inflación. El que pase de ahí cae en el tramo "Más de …".
@@ -16,7 +30,25 @@ const WaIcon = () => (<svg viewBox="0 0 24 24" width="15" height="15" fill="curr
 export default function Propiedades() {
   const { t } = useLang()
   const { properties: PROPERTIES, catalog: CATALOG, loading } = useProperties()
-  const ZONES = useMemo(() => [...new Set(PROPERTIES.map((p) => p.zone))], [PROPERTIES])
+  // Ciudades reales del catálogo, de-duplicadas por nombre normalizado (fusiona
+  // variantes tipo "Monte hermoso" / "Monte Hermoso" eligiendo la más frecuente).
+  const CITIES = useMemo(() => {
+    const groups = new Map()
+    for (const p of CATALOG) {
+      const raw = (p.city || '').trim()
+      if (!raw) continue
+      const k = norm(raw)
+      if (!groups.has(k)) groups.set(k, new Map())
+      const m = groups.get(k)
+      m.set(raw, (m.get(raw) || 0) + 1)
+    }
+    return [...groups.values()].map((m) => [...m.entries()].sort((a, b) => b[1] - a[1])[0][0])
+  }, [CATALOG])
+  // Solo las regiones que tienen propiedades, en el orden definido arriba.
+  const REGIONS = useMemo(() => {
+    const present = new Set(CITIES.map(regionOf))
+    return REGIONS_ORDER.filter((r) => present.has(r))
+  }, [CITIES])
   const TYPES = useMemo(() => [...new Set(PROPERTIES.map((p) => p.type))], [PROPERTIES])
   const [sp, setSp] = useSearchParams()
   const op = sp.get('op') || 'sale'
@@ -24,7 +56,8 @@ export default function Propiedades() {
   const priceStep = op === 'rent' ? 50000 : 10000
   const currency = op === 'rent' ? 'ars' : 'usd'
   const [type, setType] = useState(sp.get('type') || '')   // permite deep-link desde "Empresas" (?type=Galpón)
-  const [zone, setZone] = useState('')
+  const [region, setRegion] = useState('')
+  const [city, setCity] = useState('')
   const [beds, setBeds] = useState(sp.get('beds') || '')   // dormitorios mínimos (1+, 2+, 3+, 4+); permite deep-link ?beds=2
   const [lo, setLo] = useState(0)
   const [hi, setHi] = useState(priceMax)
@@ -40,7 +73,8 @@ export default function Propiedades() {
     const hasPrice = lo > 0 || hi < priceMax
     return CATALOG.filter((p) => p.op === op)
       .filter((p) => (type ? p.type === type : true))
-      .filter((p) => (zone ? p.zone === zone : true))
+      .filter((p) => (region ? regionOf(p.city) === region : true))
+      .filter((p) => (city ? norm(p.city) === norm(city) : true))
       .filter((p) => {
         if (!beds) return true
         if (beds === 'mono') return p.beds === 0 || /monoambiente/i.test(p.title || '')   // monoambiente: 0 dorm o lo dice el título
@@ -58,13 +92,16 @@ export default function Propiedades() {
         const hay = norm([p.title, p.address, p.location, p.barrio, p.zone, p.city, p.type].filter(Boolean).join(' '))
         return norm(q).split(/\s+/).filter(Boolean).every((w) => hay.includes(w))
       })
-  }, [CATALOG, op, type, zone, beds, pozo, credito, lo, hi, q, priceMax])
+  }, [CATALOG, op, type, region, city, beds, pozo, credito, lo, hi, q, priceMax])
 
   // ¿Hay algún filtro activo? Sirve para distinguir "no hay match con tus filtros" de "no hay nada cargado".
-  const anyFilter = !!(type || zone || beds || pozo || credito || q.trim() || lo > 0 || hi < priceMax)
+  const anyFilter = !!(type || region || city || beds || pozo || credito || q.trim() || lo > 0 || hi < priceMax)
 
   const typeOpts = [{ value: '', label: t.cat.alltypes }, ...TYPES.map((x) => ({ value: x, label: x }))]
-  const zoneOpts = [{ value: '', label: t.cat.allzones }, ...ZONES.map((x) => ({ value: x, label: x }))]
+  // Ciudades del desplegable: si hay región elegida, solo las de esa región.
+  const cityList = (region ? CITIES.filter((c) => regionOf(c) === region) : CITIES).slice().sort((a, b) => a.localeCompare(b, 'es'))
+  const regionOpts = [{ value: '', label: t.cat.allregions }, ...REGIONS.map((x) => ({ value: x, label: x }))]
+  const cityOpts = [{ value: '', label: t.cat.allcities }, ...cityList.map((x) => ({ value: x, label: x }))]
   const bedsOpts = [{ value: '', label: t.cat.beds }, ...t.cat.bedsOpts.map((o) => ({ value: o.v, label: o.l }))]
 
   return (
@@ -81,7 +118,8 @@ export default function Propiedades() {
           <button className={op === 'rent' ? 'on' : ''} data-cursor onClick={() => setOp('rent')}>{t.cat.rent}</button>
         </div>
         <Dropdown value={type} onChange={(v) => { setType(v); setShown(PAGE) }} options={typeOpts} placeholder={t.cat.alltypes} />
-        <Dropdown value={zone} onChange={(v) => { setZone(v); setShown(PAGE) }} options={zoneOpts} placeholder={t.cat.allzones} />
+        <Dropdown value={region} onChange={(v) => { setRegion(v); setCity(''); setShown(PAGE) }} options={regionOpts} placeholder={t.cat.allregions} />
+        <Dropdown value={city} onChange={(v) => { setCity(v); setShown(PAGE) }} options={cityOpts} placeholder={t.cat.allcities} />
         <Dropdown value={beds} onChange={(v) => { setBeds(v); setShown(PAGE) }} options={bedsOpts} placeholder={t.cat.beds} />
         <button type="button" className={'ftoggle' + (pozo ? ' on' : '')} data-cursor aria-pressed={pozo}
           onClick={() => { setPozo((v) => !v); setShown(PAGE) }}>
