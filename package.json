@@ -8,7 +8,7 @@
     "dev": "vite --host --port 4300",
     "catalog": "node scripts/gen-catalog.cjs",
     "migrate": "node scripts/migrate-to-supabase.cjs",
-    "build": "node scripts/gen-catalog.cjs && vite build",
+    "build": "node scripts/gen-catalog.cjs && vite build && node scripts/prerender-og.cjs",
     "preview": "vite preview --port 4300"
   },
   "dependencies": {
