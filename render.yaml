@@ -18,9 +18,18 @@ services:
         sync: false
       - key: VITE_SUPABASE_ANON_KEY
         sync: false
-    # SPA: cualquier ruta que no sea un archivo real cae en index.html
-    # (sin esto, entrar/refrescar en /propiedades o /propiedad/:slug da 404)
+    # El link de una propiedad se comparte SIN barra final (/propiedad/<slug>).
+    # Render no resuelve solo esa forma (cae en el rewrite SPA → preview genérico de
+    # la home), así que la redirigimos a la forma CON barra, que sí sirve el HTML
+    # pre-renderizado con el Open Graph propio (logo + título + precio de esa ficha).
+    # Las propiedades nuevas sin pre-render caen igual en la SPA (no se rompen).
+    # IMPORTANTE: esta regla va ANTES del catch-all (se evalúan en orden).
     routes:
+      - type: redirect
+        source: /propiedad/*
+        destination: /propiedad/:splat/
+      # SPA: cualquier ruta que no sea un archivo real cae en index.html
+      # (sin esto, entrar/refrescar en /propiedades o /propiedad/:slug da 404)
       - type: rewrite
         source: /*
         destination: /index.html
