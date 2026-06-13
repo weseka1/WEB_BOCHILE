@@ -30,9 +30,13 @@ const SITE = 'https://bochile.com'
 // Si existe el archivo en public/og/, TODAS las propiedades usan el logo; si no, cae a la
 // foto de cada propiedad (así nunca queda roto). Acepta .jpg / .png / .jpeg.
 const ogDir = path.join(__dirname, '..', 'public', 'og')
-const LOGO_NAME = ['bochile-og.jpg', 'bochile-og.png', 'bochile-og.jpeg'].find((n) => fs.existsSync(path.join(ogDir, n)))
+// Detecta el logo: prefiere bochile-og.* ; si no, CUALQUIER imagen png/jpg que haya en
+// public/og/ (así alcanza con SOLTAR el archivo ahí, sin importar el nombre).
+const LOGO_NAME = (fs.existsSync(ogDir) ? fs.readdirSync(ogDir) : [])
+  .filter((f) => /\.(jpe?g|png)$/i.test(f))
+  .sort((a, b) => (/^bochile-og\./i.test(b) ? 1 : 0) - (/^bochile-og\./i.test(a) ? 1 : 0))[0] || null
 const USE_LOGO = !!LOGO_NAME
-const LOGO_URL = SITE + '/og/' + (LOGO_NAME || 'bochile-og.jpg')
+const LOGO_URL = SITE + '/og/' + encodeURIComponent(LOGO_NAME || 'bochile-og.jpg')
 const FALLBACK_IMG = USE_LOGO ? LOGO_URL : SITE + '/assets/hero/exterior.jpg'
 const distDir = path.join(__dirname, '..', 'dist')
 const tplPath = path.join(distDir, 'index.html')
