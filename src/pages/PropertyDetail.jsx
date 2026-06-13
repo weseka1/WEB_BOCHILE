@@ -52,7 +52,10 @@ export default function PropertyDetail() {
   const videos = p.videos || []
   const hasVideo = videos.length > 0
   const go = (d) => setI((x) => (x + d + imgs.length) % imgs.length)
-  const propUrl = p.slug ? `https://bochile.com/propiedad/${p.slug}` : (p.url || '')
+  // Barra final a propósito: /propiedad/<slug>/ es la forma que Render sirve como
+  // archivo pre-renderizado (con OG propio: logo + título). Sin la barra cae en la
+  // SPA → preview genérico. Al hacer clic, la SPA saca la barra (ver CatchAll).
+  const propUrl = p.slug ? `https://bochile.com/propiedad/${p.slug}/` : (p.url || '')
   const msg = `Hola, me interesa esta propiedad:\n"${p.title}"\n${propUrl}\n¿Sigue disponible?`
 
   return (

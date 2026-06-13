@@ -72,7 +72,7 @@ function metaFor(p) {
   ].filter(Boolean).join(' · ')
   const images = Array.isArray(p.images) ? p.images : []
   const image = USE_LOGO ? LOGO_URL : (abs(p.main_image || images[0] || '') || FALLBACK_IMG)
-  const url = `${SITE}/propiedad/${encodeURIComponent(p.slug)}`
+  const url = `${SITE}/propiedad/${encodeURIComponent(p.slug)}/`
   return { title, desc, image, url }
 }
 

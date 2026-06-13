@@ -69,6 +69,11 @@ function RouteFx({ lenisRef }) {
 // en la web nueva (preserva el tráfico de Google) y, si no se reconoce, caen en la Home.
 function CatchAll() {
   const { pathname } = useLocation()
+  // Ficha compartida con barra final (/propiedad/<slug>/) → sacamos la barra para que
+  // matchee la ruta /propiedad/:slug y renderice la ficha. El crawler ya leyó el OG del
+  // archivo pre-renderizado; esto es solo para el usuario que hace clic en el link.
+  const ficha = pathname.match(/^\/propiedad\/(.+?)\/+$/)
+  if (ficha) return <Navigate to={'/propiedad/' + ficha[1]} replace />
   const p = decodeURIComponent(pathname).toLowerCase()
   let to = '/'
   if (/alquil|rent/.test(p)) to = '/propiedades?op=rent'
