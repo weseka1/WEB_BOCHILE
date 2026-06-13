@@ -26,7 +26,14 @@ const path = require('path')
 })()
 
 const SITE = 'https://bochile.com'
-const FALLBACK_IMG = SITE + '/assets/hero/exterior.jpg'   // sin foto → imagen de marca
+// Logo de marca para la miniatura del preview (pedido de Cami: la imagen va con el logo).
+// Si existe el archivo en public/og/, TODAS las propiedades usan el logo; si no, cae a la
+// foto de cada propiedad (así nunca queda roto). Acepta .jpg / .png / .jpeg.
+const ogDir = path.join(__dirname, '..', 'public', 'og')
+const LOGO_NAME = ['bochile-og.jpg', 'bochile-og.png', 'bochile-og.jpeg'].find((n) => fs.existsSync(path.join(ogDir, n)))
+const USE_LOGO = !!LOGO_NAME
+const LOGO_URL = SITE + '/og/' + (LOGO_NAME || 'bochile-og.jpg')
+const FALLBACK_IMG = USE_LOGO ? LOGO_URL : SITE + '/assets/hero/exterior.jpg'
 const distDir = path.join(__dirname, '..', 'dist')
 const tplPath = path.join(distDir, 'index.html')
 const URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
@@ -60,7 +67,7 @@ function metaFor(p) {
     loc,
   ].filter(Boolean).join(' · ')
   const images = Array.isArray(p.images) ? p.images : []
-  const image = abs(p.main_image || images[0] || '') || FALLBACK_IMG
+  const image = USE_LOGO ? LOGO_URL : (abs(p.main_image || images[0] || '') || FALLBACK_IMG)
   const url = `${SITE}/propiedad/${encodeURIComponent(p.slug)}`
   return { title, desc, image, url }
 }
@@ -109,5 +116,5 @@ function inject(html, m) {
     fs.writeFileSync(path.join(dir, 'index.html'), inject(tpl, metaFor(p)))
     ok++
   }
-  console.log(`prerender-og → ${ok} HTML por propiedad${skip ? ` · ${skip} sin slug/omitidas` : ''}`)
+  console.log(`prerender-og → ${ok} HTML por propiedad · imagen: ${USE_LOGO ? 'LOGO de marca (' + LOGO_NAME + ')' : 'foto de cada propiedad'}${skip ? ` · ${skip} omitidas` : ''}`)
 })()
