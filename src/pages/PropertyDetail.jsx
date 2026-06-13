@@ -52,7 +52,8 @@ export default function PropertyDetail() {
   const videos = p.videos || []
   const hasVideo = videos.length > 0
   const go = (d) => setI((x) => (x + d + imgs.length) % imgs.length)
-  const msg = `Hola Camila, me interesa la propiedad "${p.title}" (#${p.id}). ${p.url || ''}\n¿Sigue disponible? 🙌`
+  const propUrl = p.slug ? `https://bochile.com/propiedad/${p.slug}` : (p.url || '')
+  const msg = `Hola, me interesa esta propiedad:\n"${p.title}"\n${propUrl}\n¿Sigue disponible?`
 
   return (
     <div className="detail">

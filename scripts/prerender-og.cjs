@@ -46,12 +46,19 @@ const fmtPrice = (p) => {
 const abs = (u) => (!u ? '' : (/^https?:\/\//i.test(u) ? u : SITE + (u.startsWith('/') ? '' : '/') + u))
 
 function metaFor(p) {
-  const title = `${p.title || 'Propiedad'} · Bochile Real Estate`
+  const title = `${(p.title || 'Propiedad').trim()} · Bochile Real Estate`
   const label = p.type_label || p.type || ''
   const loc = p.city || p.address || 'Bahía Blanca'
-  const bits = [fmtPrice(p), label, loc].filter(Boolean).join(' · ')
-  let desc = bits
-  if (p.description) desc = `${bits} — ${String(p.description).replace(/\s+/g, ' ').trim()}`.slice(0, 200)
+  const area = p.area_total != null ? p.area_total : p.area
+  // Descripción = specs limpias (NO el texto crudo importado, que viene con emojis y
+  // mayúsculas y queda feo). Ej: "US$ 250.000 · Departamento · 67.5 m² · 2 dorm · Bahía Blanca".
+  const desc = [
+    fmtPrice(p),
+    label,
+    area != null ? `${area} m²` : '',
+    p.beds != null ? `${p.beds} dorm` : '',
+    loc,
+  ].filter(Boolean).join(' · ')
   const images = Array.isArray(p.images) ? p.images : []
   const image = abs(p.main_image || images[0] || '') || FALLBACK_IMG
   const url = `${SITE}/propiedad/${encodeURIComponent(p.slug)}`
@@ -84,7 +91,7 @@ function inject(html, m) {
     const { createClient } = require('@supabase/supabase-js')
     const db = createClient(URL, KEY, { auth: { persistSession: false } })
     const { data, error } = await db.from('properties')
-      .select('slug, title, op, type, type_label, price, price_text, currency, city, address, description, images, main_image')
+      .select('slug, title, op, type, type_label, price, price_text, city, address, area, area_total, beds, images, main_image')
       .eq('published', true)
     if (error) throw error
     rows = data || []
