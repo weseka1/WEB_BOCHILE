@@ -21,7 +21,7 @@ export const waAreaMsg = (area, lang = 'es') => ({
   alquileres: lang === 'en' ? 'Hi, I’m looking for a rental property.'          : 'Hola, estoy buscando una propiedad en alquiler.',
   tasaciones: lang === 'en' ? 'Hi, I’d like to request a property valuation.'    : 'Hola, quiero solicitar una tasación de mi propiedad.',
   galpones:   lang === 'en' ? 'Hi, I have a question about a warehouse / industrial space or a special request.' : 'Hola, quiero consultar por un galpón / depósito o un pedido especial.',
-  vacamuerta: lang === 'en' ? 'Hi, I’m interested in real estate investment (Vaca Muerta / energy / industrial parks).' : 'Hola, quiero consultar por inversión inmobiliaria (Vaca Muerta / energía / parques industriales).',
+  vacamuerta: lang === 'en' ? 'Hi, I’d like to ask about investments in Vaca Muerta (lots, apartments, fideicomisos).' : 'Hola, quiero consultar por inversiones en Vaca Muerta (lotes, departamentos, fideicomisos).',
   general:    lang === 'en' ? 'Hi, I have a question.'                           : 'Hola, tengo una consulta.',
 }[area] || '')
 

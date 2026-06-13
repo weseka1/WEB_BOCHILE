@@ -550,6 +550,7 @@ button{font-family:inherit;cursor:none;border:none;background:none;color:inherit
 .emp-cta svg{width:18px;height:18px;fill:currentColor}
 .emp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden}
 @media(max-width:480px){.emp-grid{grid-template-columns:1fr}}
+.emp-grid--3>.emp-cell:last-child{grid-column:1 / -1}
 .emp-cell{position:relative;display:flex;flex-direction:column;background:var(--bg);padding:clamp(22px,2.4vw,30px);min-height:165px;text-decoration:none;transition:background .4s var(--ease)}
 .emp-cell:hover{background:var(--panel)}
 .emp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:auto}
