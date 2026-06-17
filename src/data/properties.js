@@ -30,10 +30,16 @@ export const fmtUSD = (n) => 'US$ ' + Number(n).toLocaleString('es-AR')
 export const fmtARS = (n) => '$ ' + Number(n).toLocaleString('es-AR') + ' ARS'
 
 export const fmtPrice = (p) => {
-  // acepta número (asume venta/USD) o el objeto propiedad (decide por p.op)
+  // acepta número (asume venta/USD) o el objeto propiedad
   if (typeof p === 'number') return fmtUSD(p)
   if (p && typeof p === 'object') {
-    if (typeof p.price === 'number') return p.op === 'rent' ? fmtARS(p.price) : fmtUSD(p.price)
+    if (typeof p.price === 'number') {
+      // La moneda la manda el campo `currency`; si falta, default por operación
+      // (alquiler⇒ARS, venta⇒USD). NO inferir solo por op: hay alquileres en USD
+      // (locales/galpones) y eso mostraba un precio USD como "$ … ARS".
+      const cur = p.currency || (p.op === 'rent' ? 'ARS' : 'USD')
+      return cur === 'ARS' ? fmtARS(p.price) : fmtUSD(p.price)
+    }
     return p.priceText || 'Consultar'
   }
   return 'Consultar'

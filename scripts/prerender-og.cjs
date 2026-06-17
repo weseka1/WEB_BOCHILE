@@ -49,7 +49,9 @@ const esc = (s) => String(s == null ? '' : s)
 const fmtPrice = (p) => {
   if (p.price != null && !Number.isNaN(Number(p.price))) {
     const n = Number(p.price).toLocaleString('es-AR')
-    return p.op === 'rent' ? `$ ${n} ARS` : `US$ ${n}`
+    // La moneda la manda `currency`; si falta, default por operación (alquiler=ARS, venta=USD).
+    const cur = p.currency || (p.op === 'rent' ? 'ARS' : 'USD')
+    return cur === 'ARS' ? `$ ${n} ARS` : `US$ ${n}`
   }
   return p.price_text || 'Consultar precio'
 }

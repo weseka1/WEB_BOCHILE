@@ -12,6 +12,26 @@ const genId = () => (globalThis.crypto?.randomUUID?.() || 'p' + Date.now().toStr
 const numOrNull = (v) => { const n = parseFloat(String(v ?? '').replace(',', '.')); return Number.isFinite(n) ? n : null }
 const intOrNull = (v) => { const n = parseInt(String(v ?? ''), 10); return Number.isFinite(n) ? n : null }
 
+// Precio en formato argentino: el PUNTO es separador de miles ("580.000" = 580000),
+// la COMA es decimal. Tolera "$", "ARS"/"USD", espacios y letras. Vacío => null (= "Consultar").
+// (No usar parseFloat directo: "580.000" daría 580 y "13.000.000" daría 13.)
+const parsePriceAR = (v) => {
+  let s = String(v ?? '').trim()
+  if (!s) return null
+  s = s.replace(/[^\d.,-]/g, '')           // saca $, ARS/USD, espacios, etc.
+  if (!s) return null
+  if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.')   // coma = decimal → puntos son miles
+  else s = s.replace(/\./g, '')            // sin coma: el punto es separador de miles → sacarlo
+  const n = Number(s)
+  return Number.isFinite(n) ? n : null
+}
+// Vista previa de cómo va a figurar el precio (mismo formato que la web).
+const previewPrice = (v, currency) => {
+  const n = parsePriceAR(v)
+  if (n == null) return 'Consultar'
+  return currency === 'ARS' ? `$ ${n.toLocaleString('es-AR')} ARS` : `US$ ${n.toLocaleString('es-AR')}`
+}
+
 const EMPTY = {
   id: '', slug: '', op: 'sale', type_label: 'Casa', title: '', description: '',
   price: '', currency: 'USD', city: 'Bahía Blanca', barrio: '', zone: '', address: '',
@@ -114,8 +134,8 @@ export default function PropertyForm() {
       badge: f.type_label,
       title: f.title.trim(),
       description: f.description || null,
-      price: numOrNull(f.price),
-      price_text: numOrNull(f.price) == null ? 'Consultar' : '',
+      price: parsePriceAR(f.price),
+      price_text: parsePriceAR(f.price) == null ? 'Consultar' : '',
       currency: f.currency,
       city: f.city || null,
       barrio: f.barrio || null,
@@ -184,7 +204,8 @@ export default function PropertyForm() {
           </div>
           <div className="adm-row">
             <label>Precio
-              <input type="number" inputMode="decimal" value={f.price} onChange={set('price')} onWheel={noWheel} placeholder="Vacío = Consultar" />
+              <input type="text" inputMode="decimal" value={f.price} onChange={set('price')} placeholder="Ej: 580.000  ·  vacío = Consultar" />
+              <small className="adm-hint">Va a figurar: <b>{previewPrice(f.price, f.currency)}</b></small>
             </label>
             <label>Moneda
               <select value={f.currency} onChange={set('currency')}><option value="USD">USD</option><option value="ARS">ARS</option></select>
