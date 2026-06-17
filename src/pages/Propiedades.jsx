@@ -22,6 +22,17 @@ const regionOf = (cityRaw) => {
   return 'Otras'
 }
 
+// Ciudades del desplegable: lista CURADA (pedido de Cami), en su orden. Cada opción
+// matchea por alias normalizado para agarrar las variantes reales del catálogo
+// (ej. "Neuquén" agrupa Añelo / Vaca Muerta). Sumar acá cuando entren localidades nuevas.
+const CITY_OPTS = [
+  { label: 'Bahía Blanca',  match: /bahia blanca/ },
+  { label: 'La Plata',      match: /la plata/ },
+  { label: 'Buenos Aires',  match: /buenos aires/ },
+  { label: 'Neuquén',       match: /neuquen|anelo|vaca muerta/ },
+  { label: 'Monte Hermoso', match: /monte hermoso/ },
+]
+
 const PAGE = 9
 const SALE_MAX = 1000000     // venta: tope del slider en USD
 const RENT_MAX = 1500000     // alquiler: tope del slider en ARS ($1.500.000). Los alquileres reales hoy van $480k–$750k; deja headroom para inflación. El que pase de ahí cae en el tramo "Más de …".
@@ -31,25 +42,11 @@ const WaIcon = () => (<svg viewBox="0 0 24 24" width="15" height="15" fill="curr
 export default function Propiedades() {
   const { t } = useLang()
   const { properties: PROPERTIES, catalog: CATALOG, loading } = useProperties()
-  // Ciudades reales del catálogo, de-duplicadas por nombre normalizado (fusiona
-  // variantes tipo "Monte hermoso" / "Monte Hermoso" eligiendo la más frecuente).
-  const CITIES = useMemo(() => {
-    const groups = new Map()
-    for (const p of CATALOG) {
-      const raw = (p.city || '').trim()
-      if (!raw) continue
-      const k = norm(raw)
-      if (!groups.has(k)) groups.set(k, new Map())
-      const m = groups.get(k)
-      m.set(raw, (m.get(raw) || 0) + 1)
-    }
-    return [...groups.values()].map((m) => [...m.entries()].sort((a, b) => b[1] - a[1])[0][0])
-  }, [CATALOG])
   // Solo las regiones que tienen propiedades, en el orden definido arriba.
   const REGIONS = useMemo(() => {
-    const present = new Set(CITIES.map(regionOf))
+    const present = new Set(CATALOG.map((p) => regionOf(p.city)))
     return REGIONS_ORDER.filter((r) => present.has(r))
-  }, [CITIES])
+  }, [CATALOG])
   const TYPES = useMemo(() => [...new Set(PROPERTIES.map((p) => p.type))], [PROPERTIES])
   const [sp, setSp] = useSearchParams()
   const op = sp.get('op') || 'sale'
@@ -75,7 +72,7 @@ export default function Propiedades() {
     return CATALOG.filter((p) => p.op === op)
       .filter((p) => (type ? p.type === type : true))
       .filter((p) => (region ? regionOf(p.city) === region : true))
-      .filter((p) => (city ? norm(p.city) === norm(city) : true))
+      .filter((p) => { if (!city) return true; const cf = CITY_OPTS.find((c) => c.label === city); return cf ? cf.match.test(norm(p.city)) : true })
       .filter((p) => {
         if (!beds) return true
         if (beds === 'mono') return p.beds === 0 || /monoambiente/i.test(p.title || '')   // monoambiente: 0 dorm o lo dice el título
@@ -99,10 +96,10 @@ export default function Propiedades() {
   const anyFilter = !!(type || region || city || beds || pozo || credito || q.trim() || lo > 0 || hi < priceMax)
 
   const typeOpts = [{ value: '', label: t.cat.alltypes }, ...TYPES.map((x) => ({ value: x, label: x }))]
-  // Ciudades del desplegable: si hay región elegida, solo las de esa región.
-  const cityList = (region ? CITIES.filter((c) => regionOf(c) === region) : CITIES).slice().sort((a, b) => a.localeCompare(b, 'es'))
+  // Ciudades del desplegable (lista curada, orden de Cami): si hay región elegida, solo las de esa región.
+  const cityList = region ? CITY_OPTS.filter((c) => regionOf(c.label) === region) : CITY_OPTS
   const regionOpts = [{ value: '', label: t.cat.allregions }, ...REGIONS.map((x) => ({ value: x, label: x }))]
-  const cityOpts = [{ value: '', label: t.cat.allcities }, ...cityList.map((x) => ({ value: x, label: x }))]
+  const cityOpts = [{ value: '', label: t.cat.allcities }, ...cityList.map((c) => ({ value: c.label, label: c.label }))]
   const bedsOpts = [{ value: '', label: t.cat.beds }, ...t.cat.bedsOpts.map((o) => ({ value: o.v, label: o.l }))]
 
   return (
