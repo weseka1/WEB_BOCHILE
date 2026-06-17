@@ -24,6 +24,20 @@ export default function PropertyDetail() {
 
   useEffect(() => { setI(0); setVlb(-1); window.scrollTo(0, 0) }, [slug])
 
+  // Canonicaliza la barra de direcciones a /propiedad/<slug>/ (CON barra final). Así, si
+  // alguien COPIA el link desde el navegador para compartirlo, comparte la forma que Render
+  // sirve con el preview propio (logo + título). Sin esto la SPA deja la URL SIN barra →
+  // preview genérico al compartir (foto de la home). replaceState NO dispara navegación de
+  // React Router (no re-matchea ni loopea con el CatchAll) y preservamos history.state para
+  // no romper el back/forward del router.
+  useEffect(() => {
+    if (!slug) return
+    const want = '/propiedad/' + encodeURIComponent(slug) + '/'
+    if (window.location.pathname !== want) {
+      window.history.replaceState(window.history.state, '', want + window.location.search + window.location.hash)
+    }
+  }, [slug])
+
   // Traemos la fila completa (descripción + todo) por slug. Funciona aunque la
   // propiedad sea nueva y todavía no esté en el catálogo local.
   useEffect(() => {
