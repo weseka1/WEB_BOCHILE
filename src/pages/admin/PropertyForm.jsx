@@ -205,12 +205,15 @@ export default function PropertyForm() {
           <div className="adm-row">
             <label>Precio
               <input type="text" inputMode="decimal" value={f.price} onChange={set('price')} placeholder="Ej: 580.000  ·  vacío = Consultar" />
-              <small className="adm-hint">Va a figurar: <b>{previewPrice(f.price, f.currency)}</b></small>
             </label>
             <label>Moneda
-              <select value={f.currency} onChange={set('currency')}><option value="USD">USD</option><option value="ARS">ARS</option></select>
+              <div className="adm-seg adm-cur-seg" role="group" aria-label="Moneda del precio">
+                <button type="button" className={f.currency === 'USD' ? 'on' : ''} onClick={() => setF((s) => ({ ...s, currency: 'USD' }))}>US$ Dólares</button>
+                <button type="button" className={f.currency === 'ARS' ? 'on' : ''} onClick={() => setF((s) => ({ ...s, currency: 'ARS' }))}>$ Pesos</button>
+              </div>
             </label>
           </div>
+          <small className="adm-hint adm-price-preview">Va a figurar en la web: <b>{previewPrice(f.price, f.currency)}</b></small>
           <label>Descripción<textarea rows={6} value={f.description} onChange={set('description')} /></label>
           <label>Características (separadas por coma)
             <input value={f.features} onChange={set('features')} placeholder="pileta, garage, parrilla, jardín" />

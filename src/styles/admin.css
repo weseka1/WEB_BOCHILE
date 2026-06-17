@@ -267,6 +267,15 @@
 .adm-hint{font-weight:400;font-size:.76rem;color:var(--mute);text-transform:none;letter-spacing:normal;margin-left:1px}
 .adm-feat-hint{background:var(--gold-dim);border:1px solid rgba(205,164,94,.26);color:var(--soft);padding:12px 15px;border-radius:var(--r);font-size:.84rem;line-height:1.55;margin-top:2px}
 
+/* ── Moneda: toggle US$ / $ ARS bien grande y claro ── */
+.adm-cur-seg{width:100%;text-transform:none}
+.adm-cur-seg button{flex:1;text-align:center;text-transform:none;letter-spacing:normal;font-size:.86rem;font-weight:600;padding:10px 12px}
+/* ── Vista previa: cómo va a figurar el precio en la web (lo que ve el visitante) ── */
+.adm-price-preview{display:flex;align-items:center;gap:8px;margin:-6px 0 2px;padding:10px 14px;
+  background:var(--gold-dim);border:1px solid rgba(205,164,94,.26);border-radius:var(--r);
+  font-size:.84rem;color:var(--soft)}
+.adm-price-preview b{font-size:1.05rem;color:var(--gold);font-weight:700}
+
 .adm-form-foot{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:6px 0 10px}
 .adm-uploading{margin-right:auto;color:var(--gold);font-size:.84rem;display:inline-flex;align-items:center;gap:9px}
 
