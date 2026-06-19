@@ -70,7 +70,14 @@ export default function PropertyDetail() {
   // archivo pre-renderizado (con OG propio: logo + título). Sin la barra cae en la
   // SPA → preview genérico. Al hacer clic, la SPA saca la barra (ver CatchAll).
   const propUrl = p.slug ? `https://bochile.com/propiedad/${p.slug}/` : (p.url || '')
-  const msg = `Hola, me interesa esta propiedad:\n"${p.title}"\n${propUrl}\n¿Sigue disponible?`
+  // El título puede traer emojis (🏡, 🏢…) que en el mensaje de WhatsApp quedan
+  // raros o se rompen al copiarse. Para el TEXTO pre-cargado los sacamos y dejamos
+  // el título limpio. (En la web y en el preview/OG el emoji se sigue viendo igual.)
+  const cleanTitle = (p.title || 'esta propiedad')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}\u{FFFD}]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  const msg = `Hola, me interesa esta propiedad:\n"${cleanTitle}"\n${propUrl}\n¿Sigue disponible?`
 
   return (
     <div className="detail">
