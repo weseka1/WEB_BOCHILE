@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { waTo } from '../data/properties'
 import { useLang } from '../i18n'
 
@@ -8,7 +7,9 @@ const WaIcon = () => (
 
 // Sección Vaca Muerta — venta de lotes, departamentos y fideicomisos en Vaca
 // Muerta (Añelo, Neuquén). Reutiliza la estética de Empresas (.emp) para
-// mantener coherencia. El CTA va directo a Karina (vacamuerta).
+// mantener coherencia. Cada tarjeta (y el CTA) deriva directo a Karina
+// (vacamuerta) por WhatsApp con un mensaje pre-cargado según el rubro: la idea
+// es que un clic abra la consulta correcta, NO que mande al listado general.
 export default function InversionEnergia() {
   const { t } = useLang()
   const e = t.inversion
@@ -24,21 +25,17 @@ export default function InversionEnergia() {
           </a>
         </div>
         <div className="emp-grid emp-grid--3">
-          {e.cats.map((c, i) => {
-            const inner = (
-              <>
-                <span className="emp-top">
-                  <span className="emp-cell-num mono">0{i + 1}</span>
-                  <span className="emp-arrow" aria-hidden="true">→</span>
-                </span>
-                <h3>{c.t}</h3>
-                <p>{c.d}</p>
-              </>
-            )
-            return c.to
-              ? <Link className="emp-cell reveal" to={c.to} data-cursor key={i}>{inner}</Link>
-              : <a className="emp-cell reveal" data-cursor target="_blank" rel="noopener" href={waTo('vacamuerta', e.waMsg)} key={i}>{inner}</a>
-          })}
+          {e.cats.map((c, i) => (
+            <a className="emp-cell reveal" data-cursor target="_blank" rel="noopener"
+              href={waTo('vacamuerta', c.wa || e.waMsg)} key={i}>
+              <span className="emp-top">
+                <span className="emp-cell-num mono">0{i + 1}</span>
+                <span className="emp-arrow" aria-hidden="true">→</span>
+              </span>
+              <h3>{c.t}</h3>
+              <p>{c.d}</p>
+            </a>
+          ))}
         </div>
       </div>
     </section>
