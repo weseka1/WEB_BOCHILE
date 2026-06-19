@@ -11,12 +11,25 @@ const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
 // título, DIRECCIÓN, barrio, zona, ciudad y tipo → "Alsina 605" o "yrigoyen"
 // caen igual. (Antes faltaban address y barrio: no encontraba por dirección.)
 function search(props, q) {
-  const words = norm(q).split(/\s+/).filter(Boolean)
+  const qn = norm(q)
+  const words = qn.split(/\s+/).filter(Boolean)
   if (!words.length) return []
+  // Relevancia: la mejor coincidencia de DIRECCIÓN va primero (la dirección exacta
+  // gana a una calle que solo contiene el término de paso).
+  const score = (p) => {
+    const addr = norm(p.address || ''), title = norm(p.title || '')
+    let s = 0
+    if (addr === qn) s += 400
+    else if (addr.startsWith(qn)) s += 250
+    else if (addr.includes(qn)) s += 150
+    if (title.includes(qn)) s += 60
+    for (const w of words) { if (addr.includes(w)) s += 8; else if (title.includes(w)) s += 3 }
+    return s
+  }
   return props.filter((p) => {
     const hay = norm([p.title, p.address, p.barrio, p.zone, p.location, p.type, p.badge].filter(Boolean).join(' '))
     return words.every((w) => hay.includes(w))
-  }).slice(0, 5)
+  }).sort((a, b) => score(b) - score(a)).slice(0, 5)
 }
 
 export default function HeroConcierge({ start }) {

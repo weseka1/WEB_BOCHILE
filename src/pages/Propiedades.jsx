@@ -60,7 +60,7 @@ export default function Propiedades() {
 
   const filtered = useMemo(() => {
     const hasPrice = lo > 0 || hi < priceMax
-    return CATALOG.filter((p) => p.op === op)
+    const list = CATALOG.filter((p) => p.op === op)
       .filter((p) => (type ? p.type === type : true))
       .filter((p) => { if (!region) return true; const rf = REGION_OPTS.find((r) => r.label === region); return rf ? rf.match.test(norm(p.city)) : true })
       .filter((p) => { if (!city) return true; const cf = CITY_OPTS.find((c) => c.label === city); return cf ? cf.match.test(norm(p.city)) : true })
@@ -81,6 +81,23 @@ export default function Propiedades() {
         const hay = norm([p.title, p.address, p.location, p.barrio, p.zone, p.city, p.type].filter(Boolean).join(' '))
         return norm(q).split(/\s+/).filter(Boolean).every((w) => hay.includes(w))
       })
+    if (!q.trim()) return list
+    // Orden por RELEVANCIA al buscar: la mejor coincidencia de DIRECCIÓN va primero
+    // (ej. "san martin 566" pone "San Martín 566" arriba de una calle que solo
+    // contiene "San Martín" de paso, como una avenida de Monte Hermoso).
+    const qn = norm(q.trim())
+    const words = qn.split(/\s+/).filter(Boolean)
+    const score = (p) => {
+      const addr = norm(p.address || ''), title = norm(p.title || '')
+      let s = 0
+      if (addr === qn) s += 400
+      else if (addr.startsWith(qn)) s += 250
+      else if (addr.includes(qn)) s += 150
+      if (title.includes(qn)) s += 60
+      for (const w of words) { if (addr.includes(w)) s += 8; else if (title.includes(w)) s += 3 }
+      return s
+    }
+    return [...list].sort((a, b) => score(b) - score(a))
   }, [CATALOG, op, type, region, city, beds, pozo, credito, lo, hi, q, priceMax])
 
   // ¿Hay algún filtro activo? Sirve para distinguir "no hay match con tus filtros" de "no hay nada cargado".
