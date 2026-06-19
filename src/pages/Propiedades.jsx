@@ -61,7 +61,7 @@ export default function Propiedades() {
   const [hi, setHi] = useState(priceMax)
   const [pozo, setPozo] = useState(false)
   const [credito, setCredito] = useState(sp.get('credito') === '1')
-  const [q, setQ] = useState('')
+  const [q, setQ] = useState(sp.get('q') || '')   // pre-carga la búsqueda que llega del buscador del home (?q=)
   const [shown, setShown] = useState(PAGE)
 
   useEffect(() => { window.scrollTo(0, 0) }, [])

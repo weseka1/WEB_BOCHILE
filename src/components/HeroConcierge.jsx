@@ -7,10 +7,16 @@ import { useLang } from '../i18n'
 
 const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
 
+// Busca por PALABRAS (cada término debe aparecer, sin importar el orden) sobre
+// título, DIRECCIÓN, barrio, zona, ciudad y tipo → "Alsina 605" o "yrigoyen"
+// caen igual. (Antes faltaban address y barrio: no encontraba por dirección.)
 function search(props, q) {
-  const t = norm(q.trim())
-  if (!t) return []
-  return props.filter((p) => norm(`${p.title} ${p.location} ${p.zone} ${p.type} ${p.badge}`).includes(t)).slice(0, 4)
+  const words = norm(q).split(/\s+/).filter(Boolean)
+  if (!words.length) return []
+  return props.filter((p) => {
+    const hay = norm([p.title, p.address, p.barrio, p.zone, p.location, p.type, p.badge].filter(Boolean).join(' '))
+    return words.every((w) => hay.includes(w))
+  }).slice(0, 5)
 }
 
 export default function HeroConcierge({ start }) {
@@ -49,7 +55,8 @@ export default function HeroConcierge({ start }) {
     return () => ctx.revert()
   }, [start])
 
-  const go = () => navigate('/propiedades')
+  // Llevamos la búsqueda al listado (?q=…) para que NO se pierda lo que escribió.
+  const go = () => navigate(q.trim() ? `/propiedades?q=${encodeURIComponent(q.trim())}` : '/propiedades')
   const onChip = (c) => { setQ(c); setFocus(true) }
 
   return (
