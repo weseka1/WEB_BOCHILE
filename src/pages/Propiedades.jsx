@@ -7,30 +7,20 @@ import PropertyCard from '../components/PropertyCard'
 import Dropdown from '../components/Dropdown'
 import PriceRange from '../components/PriceRange'
 
-// Región: agrupador de ciudades. NO es un campo de los datos; lo derivamos acá
-// desde la ciudad. El orden manda cómo aparecen en el desplegable; lo no mapeado
-// cae en "Otras". Sumar acá nuevas localidades a medida que entren al catálogo.
-const REGIONS_ORDER = ['Bahía Blanca y zona', 'Costa atlántica', 'Sierras', 'Vaca Muerta / Neuquén', 'La Plata', 'Otras']
-const regionOf = (cityRaw) => {
-  const c = (cityRaw || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
-  if (!c) return 'Otras'
-  if (/anelo|neuquen|vaca muerta/.test(c)) return 'Vaca Muerta / Neuquén'
-  if (/monte hermoso|pehuen|claromeco|oriente|sauce grande/.test(c)) return 'Costa atlántica'
-  if (/sierra|ventana|tornquist|saldungaray/.test(c)) return 'Sierras'
-  if (/la plata/.test(c)) return 'La Plata'
-  if (/bahia blanca|cerri|white|cabildo|sauce/.test(c)) return 'Bahía Blanca y zona'
-  return 'Otras'
-}
-
-// Ciudades del desplegable: lista CURADA (pedido de Cami), en su orden. Cada opción
-// matchea por alias normalizado para agarrar las variantes reales del catálogo
-// (ej. "Neuquén" agrupa Añelo / Vaca Muerta). Sumar acá cuando entren localidades nuevas.
+// Región y Ciudades: DOS listas CURADAS (pedido de Cami), independientes entre sí.
+// "Región" = localidades de costa/sierra; "Ciudades" = centros urbanos. Cada opción
+// matchea por alias normalizado sobre la ciudad REAL de la propiedad (agarra
+// variantes, ej. "Neuquén" agrupa Añelo / Vaca Muerta). Sumar acá localidades nuevas.
+const REGION_OPTS = [
+  { label: 'Monte Hermoso',        match: /monte hermoso/ },
+  { label: 'Pehuen Co',            match: /pehuen/ },
+  { label: 'Sierra de la Ventana', match: /sierra de la ventana|ventana|tornquist|saldungaray/ },
+]
 const CITY_OPTS = [
   { label: 'Bahía Blanca',  match: /bahia blanca/ },
   { label: 'La Plata',      match: /la plata/ },
   { label: 'Buenos Aires',  match: /buenos aires/ },
   { label: 'Neuquén',       match: /neuquen|anelo|vaca muerta/ },
-  { label: 'Monte Hermoso', match: /monte hermoso/ },
 ]
 
 const PAGE = 9
@@ -42,11 +32,12 @@ const WaIcon = () => (<svg viewBox="0 0 24 24" width="15" height="15" fill="curr
 export default function Propiedades() {
   const { t } = useLang()
   const { properties: PROPERTIES, catalog: CATALOG, loading } = useProperties()
-  // Solo las regiones que tienen propiedades, en el orden definido arriba.
-  const REGIONS = useMemo(() => {
-    const present = new Set(CATALOG.map((p) => regionOf(p.city)))
-    return REGIONS_ORDER.filter((r) => present.has(r))
-  }, [CATALOG])
+  // Solo las regiones (lista curada) con al menos una propiedad cargada, para no
+  // mostrar un filtro que devuelve vacío.
+  const REGIONS = useMemo(
+    () => REGION_OPTS.filter((r) => CATALOG.some((p) => r.match.test(norm(p.city)))),
+    [CATALOG],
+  )
   const TYPES = useMemo(() => [...new Set(PROPERTIES.map((p) => p.type))], [PROPERTIES])
   const [sp, setSp] = useSearchParams()
   const op = sp.get('op') || 'sale'
@@ -71,7 +62,7 @@ export default function Propiedades() {
     const hasPrice = lo > 0 || hi < priceMax
     return CATALOG.filter((p) => p.op === op)
       .filter((p) => (type ? p.type === type : true))
-      .filter((p) => (region ? regionOf(p.city) === region : true))
+      .filter((p) => { if (!region) return true; const rf = REGION_OPTS.find((r) => r.label === region); return rf ? rf.match.test(norm(p.city)) : true })
       .filter((p) => { if (!city) return true; const cf = CITY_OPTS.find((c) => c.label === city); return cf ? cf.match.test(norm(p.city)) : true })
       .filter((p) => {
         if (!beds) return true
@@ -96,9 +87,10 @@ export default function Propiedades() {
   const anyFilter = !!(type || region || city || beds || pozo || credito || q.trim() || lo > 0 || hi < priceMax)
 
   const typeOpts = [{ value: '', label: t.cat.alltypes }, ...TYPES.map((x) => ({ value: x, label: x }))]
-  // Ciudades del desplegable (lista curada, orden de Cami): si hay región elegida, solo las de esa región.
-  const cityList = region ? CITY_OPTS.filter((c) => regionOf(c.label) === region) : CITY_OPTS
-  const regionOpts = [{ value: '', label: t.cat.allregions }, ...REGIONS.map((x) => ({ value: x, label: x }))]
+  // Región y Ciudades son listas independientes (curadas por Cami); se excluyen
+  // entre sí al elegir (ver onChange de los Dropdown), así nunca quedan cruzadas.
+  const cityList = CITY_OPTS
+  const regionOpts = [{ value: '', label: t.cat.allregions }, ...REGIONS.map((r) => ({ value: r.label, label: r.label }))]
   const cityOpts = [{ value: '', label: t.cat.allcities }, ...cityList.map((c) => ({ value: c.label, label: c.label }))]
   const bedsOpts = [{ value: '', label: t.cat.beds }, ...t.cat.bedsOpts.map((o) => ({ value: o.v, label: o.l }))]
 
@@ -117,7 +109,7 @@ export default function Propiedades() {
         </div>
         <Dropdown value={type} onChange={(v) => { setType(v); setShown(PAGE) }} options={typeOpts} placeholder={t.cat.alltypes} />
         <Dropdown value={region} onChange={(v) => { setRegion(v); setCity(''); setShown(PAGE) }} options={regionOpts} placeholder={t.cat.allregions} />
-        <Dropdown value={city} onChange={(v) => { setCity(v); setShown(PAGE) }} options={cityOpts} placeholder={t.cat.allcities} />
+        <Dropdown value={city} onChange={(v) => { setCity(v); setRegion(''); setShown(PAGE) }} options={cityOpts} placeholder={t.cat.allcities} />
         <Dropdown value={beds} onChange={(v) => { setBeds(v); setShown(PAGE) }} options={bedsOpts} placeholder={t.cat.beds} />
         <button type="button" className={'ftoggle' + (pozo ? ' on' : '')} data-cursor aria-pressed={pozo}
           onClick={() => { setPozo((v) => !v); setShown(PAGE) }}>
